@@ -7,6 +7,7 @@ import {
   DoorOpen,
   GlassWater,
   Minus,
+  PawPrint,
   Plus,
   Toilet,
   type LucideIcon,
@@ -78,7 +79,7 @@ export function ZooMap({
               tone="animal"
               onClick={() => onSelect({ type: "animal", data: a })}
             >
-              <span className="text-sm leading-none">{a.emoji}</span>
+              <PawPrint className="h-4 w-4 text-leaf" />
             </Marker>
           ))}
 

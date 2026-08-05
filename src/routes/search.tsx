@@ -63,9 +63,12 @@ function SearchPage() {
                 params={{ animalId: a.id }}
                 className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3 shadow-card"
               >
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-leaf/12 text-lg">
-                  {a.emoji}
-                </span>
+                <img
+                  src={a.image}
+                  alt={a.name}
+                  loading="lazy"
+                  className="h-10 w-10 shrink-0 rounded-full object-cover"
+                />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold">{a.name}</p>
                   <p className="truncate text-xs text-muted-foreground">{a.enclosure}</p>
