@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as AnimalsIndexRouteImport } from './routes/animals.index'
+import { Route as AnimalsAnimalIdRouteImport } from './routes/animals.$animalId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,34 +29,43 @@ const AnimalsIndexRoute = AnimalsIndexRouteImport.update({
   path: '/animals/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnimalsAnimalIdRoute = AnimalsAnimalIdRouteImport.update({
+  id: '/animals/$animalId',
+  path: '/animals/$animalId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/map': typeof MapRoute
+  '/animals/$animalId': typeof AnimalsAnimalIdRoute
   '/animals/': typeof AnimalsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/map': typeof MapRoute
+  '/animals/$animalId': typeof AnimalsAnimalIdRoute
   '/animals': typeof AnimalsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/map': typeof MapRoute
+  '/animals/$animalId': typeof AnimalsAnimalIdRoute
   '/animals/': typeof AnimalsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/map' | '/animals/'
+  fullPaths: '/' | '/map' | '/animals/$animalId' | '/animals/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/map' | '/animals'
-  id: '__root__' | '/' | '/map' | '/animals/'
+  to: '/' | '/map' | '/animals/$animalId' | '/animals'
+  id: '__root__' | '/' | '/map' | '/animals/$animalId' | '/animals/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MapRoute: typeof MapRoute
+  AnimalsAnimalIdRoute: typeof AnimalsAnimalIdRoute
   AnimalsIndexRoute: typeof AnimalsIndexRoute
 }
 
@@ -82,12 +92,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnimalsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/animals/$animalId': {
+      id: '/animals/$animalId'
+      path: '/animals/$animalId'
+      fullPath: '/animals/$animalId'
+      preLoaderRoute: typeof AnimalsAnimalIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MapRoute: MapRoute,
+  AnimalsAnimalIdRoute: AnimalsAnimalIdRoute,
   AnimalsIndexRoute: AnimalsIndexRoute,
 }
 export const routeTree = rootRouteImport

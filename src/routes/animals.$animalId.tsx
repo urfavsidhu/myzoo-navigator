@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Clock, Leaf, MapPin, Utensils } from "lucide-react";
 import { AppShell } from "@/components/zoo/AppShell";
 import { useZoo } from "@/lib/zoo-context";
-import { getAnimal, nearbyAnimals, statusTone } from "@/data/zoo-data";
+import { getAnimal, nearbyAnimals, statusTone, type Animal } from "@/data/zoo-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/animals/$animalId")({
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/animals/$animalId")({
 });
 
 function AnimalDetail() {
-  const { animal } = Route.useLoaderData();
+  const { animal } = Route.useLoaderData() as { animal: Animal };
   const { zooId } = useZoo();
   const nearby = nearbyAnimals(zooId, animal.id);
 
