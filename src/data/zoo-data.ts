@@ -260,7 +260,7 @@ export const animals: Animal[] = [
     name: "Gharial",
     scientificName: "Gavialis gangeticus",
     emoji: "🐊",
-    image: img("photo-1610052556943-a5ecb87e2ff9"),
+    image: img("photo-1544890225-2f3faec4cd60"),
     habitat: "Deep, fast-flowing stretches of the Ganga and Chambal",
     diet: "Piscivore — fish",
     facts: [
