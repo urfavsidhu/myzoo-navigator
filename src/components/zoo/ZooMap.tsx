@@ -37,7 +37,7 @@ export function ZooMap({
 }: {
   animals: Animal[];
   facilities: Facility[];
-  selectedId?: string;
+  selectedId?: string | undefined;
   onSelect: (point: MapPoint) => void;
 }) {
   const [zoom, setZoom] = useState(1);
