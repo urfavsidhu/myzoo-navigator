@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as AnimalsIndexRouteImport } from './routes/animals.index'
 import { Route as AnimalsAnimalIdRouteImport } from './routes/animals.$animalId'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const MapRoute = MapRouteImport.update({
   id: '/map',
   path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnimalsIndexRoute = AnimalsIndexRouteImport.update({
@@ -38,12 +44,14 @@ const AnimalsAnimalIdRoute = AnimalsAnimalIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/map': typeof MapRoute
+  '/search': typeof SearchRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
   '/animals/': typeof AnimalsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/map': typeof MapRoute
+  '/search': typeof SearchRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
   '/animals': typeof AnimalsIndexRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/map': typeof MapRoute
+  '/search': typeof SearchRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
   '/animals/': typeof AnimalsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/map' | '/animals/$animalId' | '/animals/'
+  fullPaths: '/' | '/map' | '/search' | '/animals/$animalId' | '/animals/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/map' | '/animals/$animalId' | '/animals'
-  id: '__root__' | '/' | '/map' | '/animals/$animalId' | '/animals/'
+  to: '/' | '/map' | '/search' | '/animals/$animalId' | '/animals'
+  id: '__root__' | '/' | '/map' | '/search' | '/animals/$animalId' | '/animals/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MapRoute: typeof MapRoute
+  SearchRoute: typeof SearchRoute
   AnimalsAnimalIdRoute: typeof AnimalsAnimalIdRoute
   AnimalsIndexRoute: typeof AnimalsIndexRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/map'
       fullPath: '/map'
       preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/animals/': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MapRoute: MapRoute,
+  SearchRoute: SearchRoute,
   AnimalsAnimalIdRoute: AnimalsAnimalIdRoute,
   AnimalsIndexRoute: AnimalsIndexRoute,
 }
