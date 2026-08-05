@@ -10,33 +10,91 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MapRouteImport } from './routes/map'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as VisitRouteImport } from './routes/visit'
+import { Route as AnimalsIndexRouteImport } from './routes/animals.index'
+import { Route as AnimalsAnimalIdRouteImport } from './routes/animals.$animalId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VisitRoute = VisitRouteImport.update({
+  id: '/visit',
+  path: '/visit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnimalsIndexRoute = AnimalsIndexRouteImport.update({
+  id: '/animals/',
+  path: '/animals/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnimalsAnimalIdRoute = AnimalsAnimalIdRouteImport.update({
+  id: '/animals/$animalId',
+  path: '/animals/$animalId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/map': typeof MapRoute
+  '/search': typeof SearchRoute
+  '/visit': typeof VisitRoute
+  '/animals/$animalId': typeof AnimalsAnimalIdRoute
+  '/animals/': typeof AnimalsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/map': typeof MapRoute
+  '/search': typeof SearchRoute
+  '/visit': typeof VisitRoute
+  '/animals/$animalId': typeof AnimalsAnimalIdRoute
+  '/animals': typeof AnimalsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/map': typeof MapRoute
+  '/search': typeof SearchRoute
+  '/visit': typeof VisitRoute
+  '/animals/$animalId': typeof AnimalsAnimalIdRoute
+  '/animals/': typeof AnimalsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/map' | '/search' | '/visit' | '/animals/$animalId' | '/animals/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/map' | '/search' | '/visit' | '/animals/$animalId' | '/animals'
+  id:
+    | '__root__'
+    | '/'
+    | '/map'
+    | '/search'
+    | '/visit'
+    | '/animals/$animalId'
+    | '/animals/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MapRoute: typeof MapRoute
+  SearchRoute: typeof SearchRoute
+  VisitRoute: typeof VisitRoute
+  AnimalsAnimalIdRoute: typeof AnimalsAnimalIdRoute
+  AnimalsIndexRoute: typeof AnimalsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +106,52 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/visit': {
+      id: '/visit'
+      path: '/visit'
+      fullPath: '/visit'
+      preLoaderRoute: typeof VisitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/animals/': {
+      id: '/animals/'
+      path: '/animals'
+      fullPath: '/animals/'
+      preLoaderRoute: typeof AnimalsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/animals/$animalId': {
+      id: '/animals/$animalId'
+      path: '/animals/$animalId'
+      fullPath: '/animals/$animalId'
+      preLoaderRoute: typeof AnimalsAnimalIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MapRoute: MapRoute,
+  SearchRoute: SearchRoute,
+  VisitRoute: VisitRoute,
+  AnimalsAnimalIdRoute: AnimalsAnimalIdRoute,
+  AnimalsIndexRoute: AnimalsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
