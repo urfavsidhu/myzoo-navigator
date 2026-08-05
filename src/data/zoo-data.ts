@@ -439,7 +439,8 @@ export const zoos: Zoo[] = [
 export const youAreHere = { x: 50, y: 84 };
 
 export const getAnimal = (id: string) => animals.find((a) => a.id === id);
-export const getZoo = (id: string) => zoos.find((z) => z.id === id) ?? zoos[0];
+export const getZoo = (id: string): Zoo =>
+  zoos.find((z) => z.id === id) ?? (zoos[0] as Zoo);
 export const zooAnimals = (zooId: string) => {
   const zoo = getZoo(zooId);
   return animals.filter((a) => zoo.animalIds.includes(a.id));
