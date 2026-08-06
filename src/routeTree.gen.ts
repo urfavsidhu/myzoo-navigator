@@ -14,6 +14,7 @@ import { Route as FacilitiesRouteImport } from './routes/facilities'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as HuntRouteImport } from './routes/hunt'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as PhotoSpotsRouteImport } from './routes/photo-spots'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as VisitRouteImport } from './routes/visit'
@@ -43,6 +44,11 @@ const HuntRoute = HuntRouteImport.update({
 const MapRoute = MapRouteImport.update({
   id: '/map',
   path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PhotoSpotsRoute = PhotoSpotsRouteImport.update({
+  id: '/photo-spots',
+  path: '/photo-spots',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuizRoute = QuizRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/favorites': typeof FavoritesRoute
   '/hunt': typeof HuntRoute
   '/map': typeof MapRoute
+  '/photo-spots': typeof PhotoSpotsRoute
   '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/favorites': typeof FavoritesRoute
   '/hunt': typeof HuntRoute
   '/map': typeof MapRoute
+  '/photo-spots': typeof PhotoSpotsRoute
   '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/favorites': typeof FavoritesRoute
   '/hunt': typeof HuntRoute
   '/map': typeof MapRoute
+  '/photo-spots': typeof PhotoSpotsRoute
   '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/hunt'
     | '/map'
+    | '/photo-spots'
     | '/quiz'
     | '/search'
     | '/visit'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/hunt'
     | '/map'
+    | '/photo-spots'
     | '/quiz'
     | '/search'
     | '/visit'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/hunt'
     | '/map'
+    | '/photo-spots'
     | '/quiz'
     | '/search'
     | '/visit'
@@ -153,6 +165,7 @@ export interface RootRouteChildren {
   FavoritesRoute: typeof FavoritesRoute
   HuntRoute: typeof HuntRoute
   MapRoute: typeof MapRoute
+  PhotoSpotsRoute: typeof PhotoSpotsRoute
   QuizRoute: typeof QuizRoute
   SearchRoute: typeof SearchRoute
   VisitRoute: typeof VisitRoute
@@ -195,6 +208,13 @@ declare module '@tanstack/react-router' {
       path: '/map'
       fullPath: '/map'
       preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/photo-spots': {
+      id: '/photo-spots'
+      path: '/photo-spots'
+      fullPath: '/photo-spots'
+      preLoaderRoute: typeof PhotoSpotsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quiz': {
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   FavoritesRoute: FavoritesRoute,
   HuntRoute: HuntRoute,
   MapRoute: MapRoute,
+  PhotoSpotsRoute: PhotoSpotsRoute,
   QuizRoute: QuizRoute,
   SearchRoute: SearchRoute,
   VisitRoute: VisitRoute,
