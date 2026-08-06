@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as FacilitiesRouteImport } from './routes/facilities'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as VisitRouteImport } from './routes/visit'
 import { Route as AnimalsIndexRouteImport } from './routes/animals.index'
@@ -36,6 +37,11 @@ const FavoritesRoute = FavoritesRouteImport.update({
 const MapRoute = MapRouteImport.update({
   id: '/map',
   path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizRoute = QuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/facilities': typeof FacilitiesRoute
   '/favorites': typeof FavoritesRoute
   '/map': typeof MapRoute
+  '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/facilities': typeof FacilitiesRoute
   '/favorites': typeof FavoritesRoute
   '/map': typeof MapRoute
+  '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/facilities': typeof FacilitiesRoute
   '/favorites': typeof FavoritesRoute
   '/map': typeof MapRoute
+  '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/facilities'
     | '/favorites'
     | '/map'
+    | '/quiz'
     | '/search'
     | '/visit'
     | '/animals/$animalId'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/facilities'
     | '/favorites'
     | '/map'
+    | '/quiz'
     | '/search'
     | '/visit'
     | '/animals/$animalId'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/facilities'
     | '/favorites'
     | '/map'
+    | '/quiz'
     | '/search'
     | '/visit'
     | '/animals/$animalId'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   FacilitiesRoute: typeof FacilitiesRoute
   FavoritesRoute: typeof FavoritesRoute
   MapRoute: typeof MapRoute
+  QuizRoute: typeof QuizRoute
   SearchRoute: typeof SearchRoute
   VisitRoute: typeof VisitRoute
   AnimalsAnimalIdRoute: typeof AnimalsAnimalIdRoute
@@ -162,6 +175,13 @@ declare module '@tanstack/react-router' {
       path: '/map'
       fullPath: '/map'
       preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz': {
+      id: '/quiz'
+      path: '/quiz'
+      fullPath: '/quiz'
+      preLoaderRoute: typeof QuizRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   FacilitiesRoute: FacilitiesRoute,
   FavoritesRoute: FavoritesRoute,
   MapRoute: MapRoute,
+  QuizRoute: QuizRoute,
   SearchRoute: SearchRoute,
   VisitRoute: VisitRoute,
   AnimalsAnimalIdRoute: AnimalsAnimalIdRoute,

@@ -49,7 +49,9 @@ function QuizPage() {
         title={t("page.quiz")}
         subtitle={
           done
-            ? undefined
+            ? lang === "hi"
+              ? "क्विज़ पूरा हुआ"
+              : "Quiz complete"
             : `${lang === "hi" ? "प्रश्न" : "Question"} ${step + 1} / ${quizQuestions.length}`
         }
       />
