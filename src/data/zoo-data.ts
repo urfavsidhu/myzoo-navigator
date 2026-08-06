@@ -39,6 +39,20 @@ export type Facility = {
   y: number;
 };
 
+export type Tickets = {
+  adult: string;
+  child: string;
+  student: string;
+  foreign: string;
+};
+
+export type Show = {
+  id: string;
+  name: string;
+  time: string;
+  venue: string;
+};
+
 export type Zoo = {
   id: string;
   name: string;
@@ -47,6 +61,8 @@ export type Zoo = {
   hours: string;
   closedOn: string;
   ticket: string;
+  tickets: Tickets;
+  shows: Show[];
   blurb: string;
   animalIds: string[];
 };
@@ -367,6 +383,17 @@ export const zoos: Zoo[] = [
     hours: "8:00 AM – 5:00 PM",
     closedOn: "Mondays",
     ticket: "₹60 adult · ₹30 child",
+    tickets: {
+      adult: "₹60",
+      child: "₹30",
+      student: "₹40",
+      foreign: "₹300",
+    },
+    shows: [
+      { id: "lucknow-0", name: "Elephant Bath Show", time: "11:30 AM", venue: "Elephant Yard, Zone B" },
+      { id: "lucknow-1", name: "Keeper Talk — Big Cats", time: "4:15 PM", venue: "Tiger Enclosure, Zone A" },
+      { id: "lucknow-2", name: "Bird Flight Display", time: "10:15 AM", venue: "Aviary Walk, Zone D" },
+    ],
     blurb: "Uttar Pradesh's oldest zoo, spread over 71 acres in the heart of Lucknow.",
     animalIds: animals.map((a) => a.id),
   },
@@ -378,6 +405,17 @@ export const zoos: Zoo[] = [
     hours: "8:30 AM – 5:30 PM",
     closedOn: "Mondays",
     ticket: "₹50 adult · ₹25 child",
+    tickets: {
+      adult: "₹50",
+      child: "₹25",
+      student: "₹35",
+      foreign: "₹250",
+    },
+    shows: [
+      { id: "kanpur-0", name: "Elephant Bath Show", time: "11:00 AM", venue: "Elephant Yard, Zone B" },
+      { id: "kanpur-1", name: "Keeper Talk — Sloth Bear", time: "3:45 PM", venue: "Bear House, Zone C" },
+      { id: "kanpur-2", name: "Toy Train Ride", time: "1:30 PM", venue: "Central Plaza" },
+    ],
     blurb: "One of Asia's largest forested zoos, built around natural woodland and lakes.",
     animalIds: [
       "royal-bengal-tiger",
@@ -400,6 +438,17 @@ export const zoos: Zoo[] = [
     hours: "9:00 AM – 5:00 PM",
     closedOn: "Tuesdays",
     ticket: "₹150 adult · ₹75 child",
+    tickets: {
+      adult: "₹150",
+      child: "₹75",
+      student: "₹100",
+      foreign: "₹500",
+    },
+    shows: [
+      { id: "etawah-0", name: "Lion Safari Drive", time: "9:30 AM", venue: "Lion Safari, Zone A" },
+      { id: "etawah-1", name: "Keeper Talk — Leopard", time: "4:00 PM", venue: "Leopard Rock, Zone A" },
+      { id: "etawah-2", name: "Gharial Feeding Demo", time: "2:30 PM", venue: "Gharial Channel, Zone C" },
+    ],
     blurb: "A lion breeding and safari park on the Chambal ravines.",
     animalIds: [
       "asiatic-lion",
@@ -420,6 +469,17 @@ export const zoos: Zoo[] = [
     hours: "9:00 AM – 5:00 PM",
     closedOn: "Mondays",
     ticket: "₹70 adult · ₹35 child",
+    tickets: {
+      adult: "₹70",
+      child: "₹35",
+      student: "₹45",
+      foreign: "₹350",
+    },
+    shows: [
+      { id: "gorakhpur-0", name: "Night House Walk", time: "10:30 AM", venue: "Night House" },
+      { id: "gorakhpur-1", name: "Keeper Talk — Tigers", time: "4:30 PM", venue: "Tiger Enclosure, Zone A" },
+      { id: "gorakhpur-2", name: "Deer Feeding Demo", time: "9:30 AM", venue: "Deer Meadow, Zone D" },
+    ],
     blurb: "The newest zoo in the state, with wide walkways and a night-house.",
     animalIds: [
       "royal-bengal-tiger",
@@ -497,3 +557,43 @@ export const buildDirections = (
     ],
   };
 };
+export const facilityLabels: Record<FacilityKind, string> = {
+  gate: "Gates & Exits",
+  restroom: "Washrooms",
+  food: "Food Court",
+  water: "Drinking Water",
+  firstaid: "First Aid",
+  parking: "Parking",
+  accessible: "Wheelchair Route",
+};
+
+export const facilityOrder: FacilityKind[] = [
+  "restroom",
+  "food",
+  "water",
+  "firstaid",
+  "parking",
+  "gate",
+  "accessible",
+];
+
+export const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+
+export const emergencyContacts = [
+  { id: "control", label: "Zoo Control Room", number: "1800-180-5555" },
+  { id: "security", label: "Security Desk", number: "+91 98765 43210" },
+  { id: "ambulance", label: "Ambulance", number: "108" },
+];
+
+export const bookingUrl = "https://upforest.gov.in/";
+
+export const getFacility = (id: string) => facilities.find((f) => f.id === id);
+
+export const feedingSchedule = (zooId: string) =>
+  zooAnimals(zooId)
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(`1970/01/01 ${a.feedingTime}`).getTime() -
+        new Date(`1970/01/01 ${b.feedingTime}`).getTime(),
+    );

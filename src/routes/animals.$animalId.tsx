@@ -4,6 +4,7 @@ import { AppShell } from "@/components/zoo/AppShell";
 import { useZoo } from "@/lib/zoo-context";
 import { getAnimal, nearbyAnimals, statusTone, type Animal } from "@/data/zoo-data";
 import { cn } from "@/lib/utils";
+import { FavoriteButton } from "@/components/zoo/FavoriteButton";
 
 export const Route = createFileRoute("/animals/$animalId")({
   loader: ({ params }) => {
@@ -50,6 +51,7 @@ function AnimalDetail() {
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
+        <FavoriteButton animalId={animal.id} size="lg" className="absolute right-4 top-4" />
         <div className="absolute inset-x-0 bottom-0 p-4">
           <h1 className="text-2xl font-semibold text-primary-foreground">{animal.name}</h1>
           <p className="text-sm italic text-primary-foreground/80">{animal.scientificName}</p>

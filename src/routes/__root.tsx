@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ZooProvider } from "../lib/zoo-context";
+import { FavoritesProvider } from "../lib/favorites-context";
 
 function NotFoundComponent() {
   return (
@@ -132,8 +133,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ZooProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
+        <FavoritesProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </FavoritesProvider>
       </ZooProvider>
     </QueryClientProvider>
   );

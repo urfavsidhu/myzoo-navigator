@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FacilitiesRouteImport } from './routes/facilities'
+import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as VisitRouteImport } from './routes/visit'
@@ -19,6 +21,16 @@ import { Route as AnimalsAnimalIdRouteImport } from './routes/animals.$animalId'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FacilitiesRoute = FacilitiesRouteImport.update({
+  id: '/facilities',
+  path: '/facilities',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapRoute = MapRouteImport.update({
@@ -49,6 +61,8 @@ const AnimalsAnimalIdRoute = AnimalsAnimalIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/facilities': typeof FacilitiesRoute
+  '/favorites': typeof FavoritesRoute
   '/map': typeof MapRoute
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
@@ -57,6 +71,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/facilities': typeof FacilitiesRoute
+  '/favorites': typeof FavoritesRoute
   '/map': typeof MapRoute
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
@@ -66,6 +82,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/facilities': typeof FacilitiesRoute
+  '/favorites': typeof FavoritesRoute
   '/map': typeof MapRoute
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
@@ -75,12 +93,29 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/map' | '/search' | '/visit' | '/animals/$animalId' | '/animals/'
+    | '/'
+    | '/facilities'
+    | '/favorites'
+    | '/map'
+    | '/search'
+    | '/visit'
+    | '/animals/$animalId'
+    | '/animals/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/map' | '/search' | '/visit' | '/animals/$animalId' | '/animals'
+  to:
+    | '/'
+    | '/facilities'
+    | '/favorites'
+    | '/map'
+    | '/search'
+    | '/visit'
+    | '/animals/$animalId'
+    | '/animals'
   id:
     | '__root__'
     | '/'
+    | '/facilities'
+    | '/favorites'
     | '/map'
     | '/search'
     | '/visit'
@@ -90,6 +125,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FacilitiesRoute: typeof FacilitiesRoute
+  FavoritesRoute: typeof FavoritesRoute
   MapRoute: typeof MapRoute
   SearchRoute: typeof SearchRoute
   VisitRoute: typeof VisitRoute
@@ -104,6 +141,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/facilities': {
+      id: '/facilities'
+      path: '/facilities'
+      fullPath: '/facilities'
+      preLoaderRoute: typeof FacilitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/map': {
@@ -146,6 +197,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FacilitiesRoute: FacilitiesRoute,
+  FavoritesRoute: FavoritesRoute,
   MapRoute: MapRoute,
   SearchRoute: SearchRoute,
   VisitRoute: VisitRoute,
