@@ -1,25 +1,65 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, Home, Map, PawPrint, Signpost, Ticket } from "lucide-react";
+import { Heart, Home, Languages, Map, Moon, PawPrint, Signpost, Sun, Ticket } from "lucide-react";
 import type { ReactNode } from "react";
 import { EmergencyButton } from "@/components/zoo/EmergencyButton";
+import { useAppPrefs } from "@/lib/app-context";
+import type { TKey } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 const tabs = [
-  { to: "/", label: "Home", icon: Home },
-  { to: "/map", label: "Map", icon: Map },
-  { to: "/animals", label: "Animals", icon: PawPrint },
-  { to: "/favorites", label: "Saved", icon: Heart },
-  { to: "/facilities", label: "Facilities", icon: Signpost },
-  { to: "/visit", label: "Visit", icon: Ticket },
+  { to: "/", key: "nav.home", icon: Home },
+  { to: "/map", key: "nav.map", icon: Map },
+  { to: "/animals", key: "nav.animals", icon: PawPrint },
+  { to: "/favorites", key: "nav.saved", icon: Heart },
+  { to: "/facilities", key: "nav.facilities", icon: Signpost },
+  { to: "/visit", key: "nav.visit", icon: Ticket },
 ] as const;
 
-export function AppShell({ children }: { children: ReactNode }) {
+function TopBar() {
+  const { lang, toggleLang, dark, toggleDark, kidMode } = useAppPrefs();
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <div className="mx-auto w-full max-w-2xl">{children}</div>
+    <div className="sticky top-0 z-40 flex items-center justify-between gap-2 border-b border-border/60 bg-background/85 px-4 py-2 backdrop-blur">
+      <Link to="/" className="flex items-center gap-2">
+        <span className="grid h-7 w-7 place-items-center rounded-full bg-leaf/15 text-leaf">
+          <PawPrint className="h-4 w-4" />
+        </span>
+        <span className={cn("font-display text-sm font-semibold", kidMode && "text-base")}>
+          {lang === "hi" ? "स्मार्ट ज़ू" : "Smart Zoo"}
+        </span>
+      </Link>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={toggleLang}
+          aria-label="Toggle language"
+          className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold shadow-card transition-transform active:scale-95"
+        >
+          <Languages className="h-3.5 w-3.5 text-leaf" />
+          {lang === "en" ? "EN" : "HI"}
+        </button>
+        <button
+          onClick={toggleDark}
+          aria-label="Toggle dark mode"
+          className="grid h-8 w-8 place-items-center rounded-full border border-border bg-card shadow-card transition-transform active:scale-95"
+        >
+          {dark ? <Sun className="h-4 w-4 text-sun" /> : <Moon className="h-4 w-4 text-leaf" />}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function AppShell({ children }: { children: ReactNode }) {
+  const { t, kidMode } = useAppPrefs();
+  return (
+    <div className={cn("min-h-screen bg-background pb-24", kidMode && "kid-mode")}>
+      <div className="mx-auto w-full max-w-2xl">
+        <TopBar />
+        {children}
+      </div>
       <EmergencyButton />
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-card/95 backdrop-blur">
         <div className="mx-auto grid max-w-2xl grid-cols-6">
-          {tabs.map(({ to, label, icon: Icon }) => (
+          {tabs.map(({ to, key, icon: Icon }) => (
             <Link
               key={to}
               to={to}
@@ -27,7 +67,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               className="flex flex-col items-center gap-1 py-2.5 text-[10px] font-medium text-muted-foreground transition-colors data-[status=active]:text-primary"
             >
               <Icon className="h-5 w-5" />
-              {label}
+              {t(key as TKey)}
             </Link>
           ))}
         </div>
