@@ -5,6 +5,7 @@ import { AppShell, PageHeader } from "@/components/zoo/AppShell";
 import { useZoo } from "@/lib/zoo-context";
 import { statusTone, zooAnimals } from "@/data/zoo-data";
 import { cn } from "@/lib/utils";
+import { FavoriteButton } from "@/components/zoo/FavoriteButton";
 
 export const Route = createFileRoute("/animals/")({
   head: () => ({
@@ -47,11 +48,11 @@ function AnimalsPage() {
 
         <div className="mt-4 grid grid-cols-2 gap-3">
           {list.map((a) => (
+            <div key={a.id} className="relative">
             <Link
-              key={a.id}
               to="/animals/$animalId"
               params={{ animalId: a.id }}
-              className="overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-transform active:scale-95"
+              className="block overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-transform active:scale-95"
             >
               <img src={a.image} alt={a.name} loading="lazy" className="h-28 w-full object-cover" />
               <div className="p-3">
@@ -69,6 +70,8 @@ function AnimalsPage() {
                 </span>
               </div>
             </Link>
+            <FavoriteButton animalId={a.id} className="absolute right-2 top-2" />
+            </div>
           ))}
         </div>
         {list.length === 0 ? (
