@@ -13,6 +13,9 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ZooProvider } from "../lib/zoo-context";
 import { FavoritesProvider } from "../lib/favorites-context";
+import { AppPrefsProvider } from "../lib/app-context";
+import { HuntProvider } from "../lib/hunt-context";
+import { ReviewsProvider } from "../lib/reviews-context";
 
 function NotFoundComponent() {
   return (
@@ -132,12 +135,18 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ZooProvider>
-        <FavoritesProvider>
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-        </FavoritesProvider>
-      </ZooProvider>
+      <AppPrefsProvider>
+        <ZooProvider>
+          <FavoritesProvider>
+            <HuntProvider>
+              <ReviewsProvider>
+                {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+                <Outlet />
+              </ReviewsProvider>
+            </HuntProvider>
+          </FavoritesProvider>
+        </ZooProvider>
+      </AppPrefsProvider>
     </QueryClientProvider>
   );
 }

@@ -19,6 +19,21 @@ export type Animal = {
   /** position on the zoo map, in percent */
   x: number;
   y: number;
+  /** Hindi name (demo translation) */
+  nameHi?: string;
+  /** Hindi fun facts (demo translation) */
+  factsHi?: string[];
+  /** mock live crowd level, only on popular animals */
+  crowdLevel?: CrowdLevel;
+};
+
+export type CrowdLevel = "Low" | "Medium" | "Heavy";
+
+export type Weather = {
+  tempC: number;
+  condition: "sunny" | "cloudy" | "rainy";
+  rainChance: number;
+  summary: string;
 };
 
 export type FacilityKind =
@@ -65,6 +80,8 @@ export type Zoo = {
   shows: Show[];
   blurb: string;
   animalIds: string[];
+  /** mock weather for the zoo's city */
+  weather?: Weather;
 };
 
 const img = (id: string) =>
@@ -597,3 +614,238 @@ export const feedingSchedule = (zooId: string) =>
         new Date(`1970/01/01 ${a.feedingTime}`).getTime() -
         new Date(`1970/01/01 ${b.feedingTime}`).getTime(),
     );
+
+/* ---------------------------------------------------------------
+ * Additive extensions: Hindi copy, crowd levels, weather, photo
+ * spots, treasure hunt, quiz and seed reviews.
+ * ------------------------------------------------------------- */
+
+const hindiCopy: Record<string, { nameHi: string; factsHi: string[] }> = {
+  "royal-bengal-tiger": {
+    nameHi: "रॉयल बंगाल टाइगर",
+    factsHi: ["किन्हीं दो बाघों की धारियाँ एक जैसी नहीं होतीं।"],
+  },
+  "asiatic-lion": {
+    nameHi: "एशियाई सिंह",
+    factsHi: ["एशियाई शेरों के पेट पर एक खास तह होती है।"],
+  },
+  "indian-elephant": {
+    nameHi: "भारतीय हाथी",
+    factsHi: ["एक वयस्क हाथी रोज़ 150 किलो तक पौधे खाता है।"],
+  },
+  giraffe: {
+    nameHi: "जिराफ़",
+    factsHi: ["जिराफ़ की जीभ लगभग 50 सेंटीमीटर लंबी होती है।"],
+  },
+  "indian-leopard": {
+    nameHi: "भारतीय तेंदुआ",
+    factsHi: ["तेंदुआ अपना शिकार पेड़ पर ले जाकर खाता है।"],
+  },
+  "sloth-bear": {
+    nameHi: "भालू",
+    factsHi: ["दीमक खाते समय यह अपने नथुने बंद कर लेता है।"],
+  },
+  "mugger-crocodile": {
+    nameHi: "मगरमच्छ",
+    factsHi: ["गर्मी से बचने के लिए मगर बिल खोदते हैं।"],
+  },
+  "indian-peafowl": {
+    nameHi: "मोर",
+    factsHi: ["मोर के पंखों में करीब 200 चमकीले नेत्र-चिह्न होते हैं।"],
+  },
+  "spotted-deer": {
+    nameHi: "चीतल",
+    factsHi: ["चीतल लंगूरों के नीचे गिरे फल खाने पहुँच जाते हैं।"],
+  },
+  "rhesus-macaque": {
+    nameHi: "लाल मुँह बंदर",
+    factsHi: ["ये गालों की थैली में खाना जमा कर लेते हैं।"],
+  },
+  hippopotamus: {
+    nameHi: "दरियाई घोड़ा",
+    factsHi: ["इनकी त्वचा से लाल रंग का प्राकृतिक सनस्क्रीन निकलता है।"],
+  },
+  gharial: {
+    nameHi: "घड़ियाल",
+    factsHi: ["नर घड़ियाल की नाक पर घड़े जैसा उभार होता है।"],
+  },
+};
+
+const crowdLevels: Record<string, CrowdLevel> = {
+  "royal-bengal-tiger": "Heavy",
+  "asiatic-lion": "Heavy",
+  "indian-elephant": "Medium",
+  giraffe: "Medium",
+  "indian-peafowl": "Low",
+};
+
+for (const a of animals) {
+  const h = hindiCopy[a.id];
+  if (h) {
+    a.nameHi = h.nameHi;
+    a.factsHi = h.factsHi;
+  }
+  const c = crowdLevels[a.id];
+  if (c) a.crowdLevel = c;
+}
+
+export const crowdTone: Record<CrowdLevel, string> = {
+  Low: "bg-leaf/15 text-leaf border-leaf/30",
+  Medium: "bg-sun/25 text-clay border-sun/50",
+  Heavy: "bg-destructive/15 text-destructive border-destructive/30",
+};
+
+export const crowdLabelHi: Record<CrowdLevel, string> = {
+  Low: "कम भीड़",
+  Medium: "मध्यम भीड़",
+  Heavy: "भारी भीड़",
+};
+
+const weatherByZoo: Record<string, Weather> = {
+  lucknow: { tempC: 34, condition: "sunny", rainChance: 10, summary: "Clear and warm" },
+  kanpur: { tempC: 31, condition: "cloudy", rainChance: 35, summary: "Partly cloudy" },
+  etawah: { tempC: 29, condition: "rainy", rainChance: 70, summary: "Light showers" },
+  gorakhpur: { tempC: 30, condition: "cloudy", rainChance: 45, summary: "Humid and grey" },
+};
+
+for (const z of zoos) {
+  z.weather = weatherByZoo[z.id] ?? weatherByZoo["lucknow"]!;
+}
+
+export type PhotoSpot = {
+  id: string;
+  name: string;
+  nameHi: string;
+  caption: string;
+  image: string;
+  x: number;
+  y: number;
+};
+
+export const photoSpots: PhotoSpot[] = [
+  {
+    id: "tiger-glass-wall",
+    name: "Tiger Glass Wall",
+    nameHi: "बाघ काँच दीवार",
+    caption: "Crouch low for an eye-level frame with the big cat behind you.",
+    image: img("photo-1561731216-c3a4d99437d5"),
+    x: 26,
+    y: 34,
+  },
+  {
+    id: "banyan-arch",
+    name: "Old Banyan Arch",
+    nameHi: "पुराना बरगद मेहराब",
+    caption: "Hanging roots make a natural green frame — best in morning light.",
+    image: img("photo-1441974231531-c6227db76b6e"),
+    x: 38,
+    y: 58,
+  },
+  {
+    id: "lake-deck",
+    name: "Lake View Deck",
+    nameHi: "झील व्यू डेक",
+    caption: "Wooden deck over the lake with hippos in the background.",
+    image: img("photo-1520302630591-fd1c66edc19d"),
+    x: 84,
+    y: 42,
+  },
+  {
+    id: "peacock-lawn",
+    name: "Peacock Lawn",
+    nameHi: "मोर लॉन",
+    caption: "Free-roaming peafowl often fan out here around noon.",
+    image: img("photo-1518709766631-a6a7f45921c3"),
+    x: 78,
+    y: 60,
+  },
+  {
+    id: "toy-train-bridge",
+    name: "Toy Train Bridge",
+    nameHi: "टॉय ट्रेन पुल",
+    caption: "Catch the little train crossing behind you for a fun action shot.",
+    image: img("photo-1503656142023-618e7d1f435a"),
+    x: 52,
+    y: 78,
+  },
+];
+
+/** the 5 animals in the active treasure hunt */
+export const huntAnimalIds = [
+  "royal-bengal-tiger",
+  "indian-elephant",
+  "indian-peafowl",
+  "sloth-bear",
+  "gharial",
+];
+
+export const huntAnimals = () =>
+  huntAnimalIds.map((id) => getAnimal(id)).filter(Boolean) as Animal[];
+
+export type QuizQuestion = {
+  id: string;
+  question: string;
+  questionHi: string;
+  options: string[];
+  optionsHi: string[];
+  answer: number;
+};
+
+export const quizQuestions: QuizQuestion[] = [
+  {
+    id: "q1",
+    question: "Which animal is called the king of the jungle?",
+    questionHi: "किस जानवर को जंगल का राजा कहा जाता है?",
+    options: ["Lion", "Deer", "Peacock", "Crocodile"],
+    optionsHi: ["शेर", "हिरण", "मोर", "मगरमच्छ"],
+    answer: 0,
+  },
+  {
+    id: "q2",
+    question: "Which animal has a very long blue-black tongue?",
+    questionHi: "किस जानवर की जीभ बहुत लंबी और नीली-काली होती है?",
+    options: ["Tiger", "Giraffe", "Monkey", "Bear"],
+    optionsHi: ["बाघ", "जिराफ़", "बंदर", "भालू"],
+    answer: 1,
+  },
+  {
+    id: "q3",
+    question: "Which bird is the national bird of India?",
+    questionHi: "भारत का राष्ट्रीय पक्षी कौन सा है?",
+    options: ["Parrot", "Crow", "Peacock", "Owl"],
+    optionsHi: ["तोता", "कौआ", "मोर", "उल्लू"],
+    answer: 2,
+  },
+  {
+    id: "q4",
+    question: "Which animal eats up to 150 kg of plants a day?",
+    questionHi: "कौन सा जानवर रोज़ 150 किलो तक पौधे खाता है?",
+    options: ["Elephant", "Leopard", "Gharial", "Macaque"],
+    optionsHi: ["हाथी", "तेंदुआ", "घड़ियाल", "बंदर"],
+    answer: 0,
+  },
+];
+
+export type Review = {
+  id: string;
+  animalId: string;
+  name: string;
+  rating: number;
+  text: string;
+};
+
+export const seedReviews: Review[] = [
+  { id: "r1", animalId: "royal-bengal-tiger", name: "Ananya", rating: 5, text: "Saw him pacing right at the glass. Unforgettable!" },
+  { id: "r2", animalId: "royal-bengal-tiger", name: "Rahul", rating: 4, text: "Go at 4:30 PM feeding, much more active." },
+  { id: "r3", animalId: "asiatic-lion", name: "Meera", rating: 5, text: "The safari drive was the highlight of our trip." },
+  { id: "r4", animalId: "asiatic-lion", name: "Imran", rating: 4, text: "Great enclosure, a bit crowded on Sunday." },
+  { id: "r5", animalId: "indian-elephant", name: "Priya", rating: 5, text: "Bath show at 11:30 is lovely for kids." },
+  { id: "r6", animalId: "indian-elephant", name: "Sunil", rating: 4, text: "Very calm and well cared for." },
+  { id: "r7", animalId: "gharial", name: "Kavya", rating: 4, text: "Rare to see one up close — worth the walk." },
+  { id: "r8", animalId: "indian-peafowl", name: "Dev", rating: 5, text: "They walk freely near the aviary. Beautiful." },
+  { id: "r9", animalId: "spotted-deer", name: "Nisha", rating: 4, text: "Peaceful meadow, great for a slow stroll." },
+  { id: "r10", animalId: "sloth-bear", name: "Arjun", rating: 4, text: "Funny to watch it dig for termites." },
+];
+
+export const defaultReviewsFor = (animalId: string) =>
+  seedReviews.filter((r) => r.animalId === animalId);

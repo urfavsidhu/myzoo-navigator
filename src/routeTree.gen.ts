@@ -12,7 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FacilitiesRouteImport } from './routes/facilities'
 import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as HuntRouteImport } from './routes/hunt'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as PhotoSpotsRouteImport } from './routes/photo-spots'
+import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as VisitRouteImport } from './routes/visit'
 import { Route as AnimalsIndexRouteImport } from './routes/animals.index'
@@ -33,9 +36,24 @@ const FavoritesRoute = FavoritesRouteImport.update({
   path: '/favorites',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HuntRoute = HuntRouteImport.update({
+  id: '/hunt',
+  path: '/hunt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MapRoute = MapRouteImport.update({
   id: '/map',
   path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PhotoSpotsRoute = PhotoSpotsRouteImport.update({
+  id: '/photo-spots',
+  path: '/photo-spots',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizRoute = QuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -63,7 +81,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/facilities': typeof FacilitiesRoute
   '/favorites': typeof FavoritesRoute
+  '/hunt': typeof HuntRoute
   '/map': typeof MapRoute
+  '/photo-spots': typeof PhotoSpotsRoute
+  '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
@@ -73,7 +94,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/facilities': typeof FacilitiesRoute
   '/favorites': typeof FavoritesRoute
+  '/hunt': typeof HuntRoute
   '/map': typeof MapRoute
+  '/photo-spots': typeof PhotoSpotsRoute
+  '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
@@ -84,7 +108,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/facilities': typeof FacilitiesRoute
   '/favorites': typeof FavoritesRoute
+  '/hunt': typeof HuntRoute
   '/map': typeof MapRoute
+  '/photo-spots': typeof PhotoSpotsRoute
+  '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
@@ -96,7 +123,10 @@ export interface FileRouteTypes {
     | '/'
     | '/facilities'
     | '/favorites'
+    | '/hunt'
     | '/map'
+    | '/photo-spots'
+    | '/quiz'
     | '/search'
     | '/visit'
     | '/animals/$animalId'
@@ -106,7 +136,10 @@ export interface FileRouteTypes {
     | '/'
     | '/facilities'
     | '/favorites'
+    | '/hunt'
     | '/map'
+    | '/photo-spots'
+    | '/quiz'
     | '/search'
     | '/visit'
     | '/animals/$animalId'
@@ -116,7 +149,10 @@ export interface FileRouteTypes {
     | '/'
     | '/facilities'
     | '/favorites'
+    | '/hunt'
     | '/map'
+    | '/photo-spots'
+    | '/quiz'
     | '/search'
     | '/visit'
     | '/animals/$animalId'
@@ -127,7 +163,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FacilitiesRoute: typeof FacilitiesRoute
   FavoritesRoute: typeof FavoritesRoute
+  HuntRoute: typeof HuntRoute
   MapRoute: typeof MapRoute
+  PhotoSpotsRoute: typeof PhotoSpotsRoute
+  QuizRoute: typeof QuizRoute
   SearchRoute: typeof SearchRoute
   VisitRoute: typeof VisitRoute
   AnimalsAnimalIdRoute: typeof AnimalsAnimalIdRoute
@@ -157,11 +196,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FavoritesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hunt': {
+      id: '/hunt'
+      path: '/hunt'
+      fullPath: '/hunt'
+      preLoaderRoute: typeof HuntRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/map': {
       id: '/map'
       path: '/map'
       fullPath: '/map'
       preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/photo-spots': {
+      id: '/photo-spots'
+      path: '/photo-spots'
+      fullPath: '/photo-spots'
+      preLoaderRoute: typeof PhotoSpotsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz': {
+      id: '/quiz'
+      path: '/quiz'
+      fullPath: '/quiz'
+      preLoaderRoute: typeof QuizRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -199,7 +259,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FacilitiesRoute: FacilitiesRoute,
   FavoritesRoute: FavoritesRoute,
+  HuntRoute: HuntRoute,
   MapRoute: MapRoute,
+  PhotoSpotsRoute: PhotoSpotsRoute,
+  QuizRoute: QuizRoute,
   SearchRoute: SearchRoute,
   VisitRoute: VisitRoute,
   AnimalsAnimalIdRoute: AnimalsAnimalIdRoute,
