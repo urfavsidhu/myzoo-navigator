@@ -1,8 +1,24 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Clock, MapPin, PawPrint, Search, Ticket, Map as MapIcon } from "lucide-react";
+import {
+  Baby,
+  Camera,
+  Clock,
+  Compass,
+  Heart,
+  MapPin,
+  PawPrint,
+  Search,
+  Signpost,
+  Sparkles,
+  Ticket,
+  Map as MapIcon,
+} from "lucide-react";
 import { AppShell } from "@/components/zoo/AppShell";
+import { WeatherCard } from "@/components/zoo/WeatherCard";
 import { useZoo } from "@/lib/zoo-context";
+import { useAppPrefs } from "@/lib/app-context";
+import { cn } from "@/lib/utils";
 import { zoos, zooAnimals } from "@/data/zoo-data";
 import {
   Select,
@@ -38,8 +54,17 @@ const quickLinks = [
   { to: "/visit", label: "Timings", icon: Clock },
 ] as const;
 
+const moreLinks = [
+  { to: "/facilities", label: "Facilities", labelHi: "सुविधाएँ", icon: Signpost },
+  { to: "/favorites", label: "Saved", labelHi: "सहेजे", icon: Heart },
+  { to: "/photo-spots", label: "Photo Spots", labelHi: "फोटो स्पॉट", icon: Camera },
+  { to: "/hunt", label: "Treasure Hunt", labelHi: "खज़ाना खोज", icon: Compass },
+  { to: "/quiz", label: "Animal Quiz", labelHi: "जानवर क्विज़", icon: Sparkles },
+] as const;
+
 function Index() {
   const { zoo, zooId, setZooId } = useZoo();
+  const { t, lang, kidMode, toggleKidMode } = useAppPrefs();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const count = zooAnimals(zooId).length;
@@ -58,7 +83,7 @@ function Index() {
             Uttar Pradesh
           </p>
           <h1 className="mt-1 text-3xl font-semibold text-primary-foreground">
-            Smart Zoo Navigator
+            {t("page.home")}
           </h1>
           <p className="mt-1 text-sm text-primary-foreground/80">
             Find every animal, washroom and shortcut inside the zoo.
@@ -67,9 +92,11 @@ function Index() {
       </section>
 
       <div className="space-y-6 px-4 py-5">
+        <WeatherCard />
+
         <div className="rounded-3xl border border-border bg-card p-4 shadow-card">
           <label className="text-xs font-semibold text-muted-foreground uppercase">
-            Choose your zoo
+            {t("label.chooseZoo")}
           </label>
           <Select value={zooId} onValueChange={setZooId}>
             <SelectTrigger className="mt-2 h-12 w-full rounded-2xl">
@@ -100,10 +127,39 @@ function Index() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search tiger, washroom, food court…"
+            placeholder={t("search.placeholder")}
             className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
         </form>
+
+        <button
+          onClick={toggleKidMode}
+          className={cn(
+            "flex w-full items-center gap-3 rounded-3xl border p-4 text-left shadow-card transition-transform active:scale-95",
+            kidMode ? "border-sun bg-sun/15" : "border-border bg-card",
+          )}
+        >
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-sun/25 text-clay">
+            <Baby className="h-5 w-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-semibold">{t("label.kidMode")}</span>
+            <span className="block text-xs text-muted-foreground">{t("label.kidModeHint")}</span>
+          </span>
+          <span
+            className={cn(
+              "relative h-6 w-11 shrink-0 rounded-full transition-colors",
+              kidMode ? "bg-leaf" : "bg-secondary",
+            )}
+          >
+            <span
+              className={cn(
+                "absolute top-0.5 h-5 w-5 rounded-full bg-card shadow-card transition-all",
+                kidMode ? "left-[1.375rem]" : "left-0.5",
+              )}
+            />
+          </span>
+        </button>
 
         <div className="grid grid-cols-4 gap-3">
           {quickLinks.map(({ to, label, icon: Icon }) => (
@@ -119,6 +175,24 @@ function Index() {
             </Link>
           ))}
         </div>
+
+        <section>
+          <h2 className="text-lg font-semibold">{t("label.quickLinks")}</h2>
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            {moreLinks.map(({ to, label, labelHi, icon: Icon }) => (
+              <Link
+                key={to}
+                to={to}
+                className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3 text-sm font-semibold shadow-card transition-transform active:scale-95"
+              >
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-leaf/12 text-leaf">
+                  <Icon className="h-4.5 w-4.5" />
+                </span>
+                <span className="truncate">{lang === "hi" ? labelHi : label}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
 
         <section>
           <h2 className="text-lg font-semibold">Popular zoos in Uttar Pradesh</h2>
