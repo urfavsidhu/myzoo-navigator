@@ -6,6 +6,7 @@ import { useZoo } from "@/lib/zoo-context";
 import { statusTone, zooAnimals } from "@/data/zoo-data";
 import { cn } from "@/lib/utils";
 import { FavoriteButton } from "@/components/zoo/FavoriteButton";
+import { CrowdBadge } from "@/components/zoo/CrowdBadge";
 
 export const Route = createFileRoute("/animals/")({
   head: () => ({
@@ -52,9 +53,14 @@ function AnimalsPage() {
             <Link
               to="/animals/$animalId"
               params={{ animalId: a.id }}
-              className="block overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-transform active:scale-95"
+              className="kid-card block overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-transform active:scale-95"
             >
-              <img src={a.image} alt={a.name} loading="lazy" className="h-28 w-full object-cover" />
+              <div className="relative">
+                <img src={a.image} alt={a.name} loading="lazy" className="h-28 w-full object-cover" />
+                {a.crowdLevel ? (
+                  <CrowdBadge level={a.crowdLevel} className="absolute left-2 top-2 bg-card/90" />
+                ) : null}
+              </div>
               <div className="p-3">
                 <p className="text-sm font-semibold leading-tight">{a.name}</p>
                 <p className="mt-0.5 truncate text-[11px] italic text-muted-foreground">
