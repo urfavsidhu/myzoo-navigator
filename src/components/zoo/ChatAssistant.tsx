@@ -34,7 +34,14 @@ export function ChatAssistant() {
     setLoading(true);
 
     const context = {
-      zoo: { name: zoo.name, city: zoo.city, timings: zoo.timings, closedDays: zoo.closedDays },
+      zoo: {
+        name: zoo.name,
+        city: zoo.city,
+        hours: zoo.hours,
+        closedOn: zoo.closedOn,
+        tickets: zoo.tickets,
+        shows: zoo.shows,
+      },
       youAreHere,
       animals: zooAnimals(zooId).map((a) => ({
         name: a.name,
