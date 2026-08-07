@@ -1,10 +1,15 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useState } from "react";
 import { ArrowLeft, Clock, Leaf, MapPin, Utensils } from "lucide-react";
 import { AppShell } from "@/components/zoo/AppShell";
 import { useZoo } from "@/lib/zoo-context";
 import { getAnimal, nearbyAnimals, statusTone, type Animal } from "@/data/zoo-data";
 import { cn } from "@/lib/utils";
 import { FavoriteButton } from "@/components/zoo/FavoriteButton";
+import { CrowdBadge } from "@/components/zoo/CrowdBadge";
+import { StarRating } from "@/components/zoo/StarRating";
+import { useReviews } from "@/lib/reviews-context";
+import { useAppPrefs } from "@/lib/app-context";
 
 export const Route = createFileRoute("/animals/$animalId")({
   loader: ({ params }) => {
@@ -38,11 +43,15 @@ function AnimalDetail() {
   const { animal } = Route.useLoaderData() as { animal: Animal };
   const { zooId } = useZoo();
   const nearby = nearbyAnimals(zooId, animal.id);
+  const { lang, t } = useAppPrefs();
+  const hi = lang === "hi";
+  const displayName = (hi && animal.nameHi) || animal.name;
+  const facts = (hi && animal.factsHi?.length ? animal.factsHi : animal.facts) ?? [];
 
   return (
     <AppShell>
       <div className="relative h-64 w-full">
-        <img src={animal.image} alt={animal.name} className="h-full w-full object-cover" />
+        <img src={animal.image} alt={displayName} className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-leaf-deep/90 to-transparent" />
         <Link
           to="/animals"
@@ -53,7 +62,7 @@ function AnimalDetail() {
         </Link>
         <FavoriteButton animalId={animal.id} size="lg" className="absolute right-4 top-4" />
         <div className="absolute inset-x-0 bottom-0 p-4">
-          <h1 className="text-2xl font-semibold text-primary-foreground">{animal.name}</h1>
+          <h1 className="text-2xl font-semibold text-primary-foreground">{displayName}</h1>
           <p className="text-sm italic text-primary-foreground/80">{animal.scientificName}</p>
         </div>
       </div>
@@ -71,16 +80,17 @@ function AnimalDetail() {
           <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-medium">
             <Clock className="h-3.5 w-3.5 text-leaf" /> Feeding {animal.feedingTime}
           </span>
+          {animal.crowdLevel ? <CrowdBadge level={animal.crowdLevel} /> : null}
         </div>
 
         <InfoRow icon={Leaf} label="Habitat" value={animal.habitat} />
         <InfoRow icon={Utensils} label="Diet" value={animal.diet} />
         <InfoRow icon={MapPin} label="Enclosure" value={animal.enclosure} />
 
-        <div className="rounded-3xl border border-border bg-card p-4 shadow-card">
+        <div className="kid-card rounded-3xl border border-border bg-card p-4 shadow-card">
           <h2 className="text-base font-semibold">Fun facts</h2>
           <ul className="mt-2 space-y-2">
-            {animal.facts.map((f) => (
+            {facts.map((f) => (
               <li key={f} className="flex gap-2 text-sm text-muted-foreground">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-leaf" />
                 {f}
@@ -109,7 +119,7 @@ function AnimalDetail() {
               >
                 <img src={a.image} alt={a.name} className="h-12 w-12 rounded-xl object-cover" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold">{a.name}</p>
+                  <p className="truncate text-sm font-semibold">{(hi && a.nameHi) || a.name}</p>
                   <p className="text-xs text-muted-foreground">{a.enclosure}</p>
                 </div>
                 <span className="shrink-0 rounded-full bg-leaf/12 px-2.5 py-1 text-xs font-semibold text-leaf">
@@ -119,8 +129,81 @@ function AnimalDetail() {
             ))}
           </div>
         </section>
+
+        <ReviewsSection animalId={animal.id} />
       </div>
     </AppShell>
+  );
+}
+
+function ReviewsSection({ animalId }: { animalId: string }) {
+  const { t } = useAppPrefs();
+  const { reviewsFor, averageFor, addReview } = useReviews();
+  const list = reviewsFor(animalId);
+  const avg = averageFor(animalId);
+  const [name, setName] = useState("");
+  const [text, setText] = useState("");
+  const [rating, setRating] = useState(5);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!text.trim()) return;
+    addReview({ animalId, name: name.trim() || "Visitor", rating, text: text.trim() });
+    setName("");
+    setText("");
+    setRating(5);
+  };
+
+  return (
+    <section className="rounded-3xl border border-border bg-card p-4 shadow-card">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-base font-semibold">{t("label.reviews")}</h2>
+        <div className="flex items-center gap-2">
+          <StarRating value={avg} />
+          <span className="text-xs text-muted-foreground">
+            {avg ? avg.toFixed(1) : "—"} · {list.length}
+          </span>
+        </div>
+      </div>
+
+      <div className="mt-3 space-y-3">
+        {list.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{t("label.noReviews")}</p>
+        ) : (
+          list.map((r) => (
+            <div key={r.id} className="rounded-2xl bg-secondary/60 p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-semibold">{r.name}</p>
+                <StarRating value={r.rating} />
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">{r.text}</p>
+            </div>
+          ))
+        )}
+      </div>
+
+      <form onSubmit={submit} className="mt-4 space-y-2 border-t border-border pt-4">
+        <StarRating value={rating} size="lg" onChange={setRating} />
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder={t("label.yourName")}
+          className="w-full rounded-full border border-border bg-background px-4 py-2.5 text-sm outline-none"
+        />
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder={t("label.yourReview")}
+          className="w-full rounded-full border border-border bg-background px-4 py-2.5 text-sm outline-none"
+        />
+        <button
+          type="submit"
+          className="w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-transform active:scale-95"
+        >
+          {t("btn.submit")}
+        </button>
+      </form>
+    </section>
   );
 }
 
@@ -134,7 +217,7 @@ function InfoRow({
   value: string;
 }) {
   return (
-    <div className="flex gap-3 rounded-2xl border border-border bg-card p-3 shadow-card">
+    <div className="kid-card flex gap-3 rounded-2xl border border-border bg-card p-3 shadow-card">
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-leaf/12 text-leaf">
         <Icon className="h-4 w-4" />
       </span>

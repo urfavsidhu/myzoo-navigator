@@ -5,6 +5,7 @@ import { AppShell, PageHeader } from "@/components/zoo/AppShell";
 import { ZooMap, type MapPoint } from "@/components/zoo/ZooMap";
 import { useZoo } from "@/lib/zoo-context";
 import { buildDirections, facilities, getAnimal, zooAnimals } from "@/data/zoo-data";
+import { CrowdBadge } from "@/components/zoo/CrowdBadge";
 
 export const Route = createFileRoute("/map")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -70,6 +71,9 @@ function MapPage() {
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
               <div className="min-w-0">
                 <p className="truncate text-base font-semibold">{selected.data.name}</p>
+                {selected.type === "animal" && selected.data.crowdLevel ? (
+                  <CrowdBadge level={selected.data.crowdLevel} className="mt-1" />
+                ) : null}
                 <p className="mt-0.5 text-xs text-muted-foreground">
                   {selected.type === "animal"
                     ? selected.data.enclosure
