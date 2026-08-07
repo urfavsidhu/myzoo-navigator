@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Heart, Home, Languages, Map, Moon, PawPrint, Signpost, Sun, Ticket } from "lucide-react";
 import type { ReactNode } from "react";
 import { EmergencyButton } from "@/components/zoo/EmergencyButton";
+import { ChatAssistant } from "@/components/zoo/ChatAssistant";
 import { useAppPrefs } from "@/lib/app-context";
 import type { TKey } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -57,6 +58,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {children}
       </div>
       <EmergencyButton />
+      <ChatAssistant />
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-card/95 backdrop-blur">
         <div className="mx-auto grid max-w-2xl grid-cols-6">
           {tabs.map(({ to, key, icon: Icon }) => (
