@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Footprints, Navigation, X } from "lucide-react";
+import { CheckCircle2, Download, Footprints, Navigation, X } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/zoo/AppShell";
 import { ZooMap, type MapPoint } from "@/components/zoo/ZooMap";
 import { useZoo } from "@/lib/zoo-context";
@@ -33,6 +33,8 @@ function MapPage() {
   const { focus } = Route.useSearch();
   const [selected, setSelected] = useState<MapPoint | null>(null);
   const [directions, setDirections] = useState<ReturnType<typeof buildDirections> | null>(null);
+  const [offlineProgress, setOfflineProgress] = useState<number | null>(null);
+  const [offlineReady, setOfflineReady] = useState(false);
 
   useEffect(() => {
     if (!focus) return;
@@ -47,9 +49,31 @@ function MapPage() {
 
   const point = selected?.data;
 
+  const downloadOffline = () => {
+    if (offlineReady || offlineProgress !== null) return;
+    setOfflineProgress(0);
+    const timer = setInterval(() => {
+      setOfflineProgress((p) => {
+        const next = (p ?? 0) + 5;
+        if (next >= 100) {
+          clearInterval(timer);
+          setOfflineReady(true);
+          setTimeout(() => setOfflineProgress(null), 400);
+          return 100;
+        }
+        return next;
+      });
+    }, 100);
+  };
+
   return (
     <AppShell>
       <PageHeader title="Zoo Map" subtitle={`${zoo.name}, ${zoo.city}`} />
+      {offlineReady ? (
+        <div className="mx-4 mb-3 flex items-center gap-2 rounded-2xl border border-leaf/30 bg-leaf/10 px-3 py-2 text-xs font-semibold text-leaf-deep">
+          <CheckCircle2 className="h-4 w-4 text-leaf" /> Offline map ready
+        </div>
+      ) : null}
       <div className="px-4">
         <ZooMap
           animals={zooAnimals(zooId)}
@@ -63,6 +87,27 @@ function MapPage() {
         <p className="mt-3 text-center text-xs text-muted-foreground">
           Tap a marker for details · use + / − to zoom
         </p>
+
+        {!offlineReady ? (
+          <div className="mt-3">
+            <button
+              onClick={downloadOffline}
+              disabled={offlineProgress !== null}
+              className="flex w-full items-center justify-center gap-2 rounded-full border border-border bg-card px-4 py-3 text-sm font-semibold shadow-card transition-transform active:scale-95 disabled:opacity-70"
+            >
+              <Download className="h-4 w-4 text-leaf" />
+              {offlineProgress !== null ? "Downloading map…" : "Download map for offline use"}
+            </button>
+            {offlineProgress !== null ? (
+              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary">
+                <div
+                  className="h-full rounded-full bg-leaf transition-all duration-100"
+                  style={{ width: `${offlineProgress}%` }}
+                />
+              </div>
+            ) : null}
+          </div>
+        ) : null}
       </div>
 
       {selected ? (

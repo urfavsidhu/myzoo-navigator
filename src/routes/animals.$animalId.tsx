@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
-import { ArrowLeft, Clock, Leaf, MapPin, Utensils } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Camera, Clock, Leaf, MapPin, Square, Utensils, Volume2, X } from "lucide-react";
 import { AppShell } from "@/components/zoo/AppShell";
 import { useZoo } from "@/lib/zoo-context";
 import { getAnimal, nearbyAnimals, statusTone, type Animal } from "@/data/zoo-data";
@@ -47,6 +47,7 @@ function AnimalDetail() {
   const hi = lang === "hi";
   const displayName = (hi && animal.nameHi) || animal.name;
   const facts = (hi && animal.factsHi?.length ? animal.factsHi : animal.facts) ?? [];
+  const [arOpen, setArOpen] = useState(false);
 
   return (
     <AppShell>
@@ -88,7 +89,10 @@ function AnimalDetail() {
         <InfoRow icon={MapPin} label="Enclosure" value={animal.enclosure} />
 
         <div className="kid-card rounded-3xl border border-border bg-card p-4 shadow-card">
-          <h2 className="text-base font-semibold">Fun facts</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-base font-semibold">{hi ? "मज़ेदार तथ्य" : "Fun facts"}</h2>
+            <AudioGuide animal={animal} hi={hi} displayName={displayName} facts={facts} />
+          </div>
           <ul className="mt-2 space-y-2">
             {facts.map((f) => (
               <li key={f} className="flex gap-2 text-sm text-muted-foreground">
@@ -106,6 +110,13 @@ function AnimalDetail() {
         >
           <MapPin className="h-4 w-4" /> View on map
         </Link>
+
+        <button
+          onClick={() => setArOpen(true)}
+          className="flex w-full items-center justify-center gap-2 rounded-full border border-border bg-card px-4 py-3 text-sm font-semibold shadow-card transition-transform active:scale-95"
+        >
+          <Camera className="h-4 w-4 text-leaf" /> {hi ? "एआर व्यू" : "AR View"}
+        </button>
 
         <section>
           <h2 className="text-base font-semibold">Nearby animals</h2>
@@ -132,7 +143,129 @@ function AnimalDetail() {
 
         <ReviewsSection animalId={animal.id} />
       </div>
+
+      {arOpen ? (
+        <ArView
+          image={animal.image}
+          name={displayName}
+          enclosure={animal.enclosure}
+          facts={facts.slice(0, 2)}
+          hi={hi}
+          onClose={() => setArOpen(false)}
+        />
+      ) : null}
     </AppShell>
+  );
+}
+
+function AudioGuide({
+  animal,
+  hi,
+  displayName,
+  facts,
+}: {
+  animal: Animal;
+  hi: boolean;
+  displayName: string;
+  facts: readonly string[];
+}) {
+  const [speaking, setSpeaking] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+    };
+  }, []);
+
+  const toggle = () => {
+    const synth = typeof window !== "undefined" ? window.speechSynthesis : undefined;
+    if (!synth) return;
+    if (speaking) {
+      synth.cancel();
+      setSpeaking(false);
+      return;
+    }
+    const script = hi
+      ? `${displayName}। आवास: ${animal.habitat}। भोजन: ${animal.diet}। ${facts.join(" ")}`
+      : `${displayName}. Habitat: ${animal.habitat}. Diet: ${animal.diet}. ${facts.join(" ")}`;
+    const utter = new SpeechSynthesisUtterance(script);
+    utter.lang = hi ? "hi-IN" : "en-IN";
+    const voice = synth.getVoices().find((v) => v.lang.toLowerCase().startsWith(hi ? "hi" : "en"));
+    if (voice) utter.voice = voice;
+    utter.rate = 0.95;
+    utter.onend = () => setSpeaking(false);
+    utter.onerror = () => setSpeaking(false);
+    synth.cancel();
+    synth.speak(utter);
+    setSpeaking(true);
+  };
+
+  return (
+    <button
+      onClick={toggle}
+      aria-label={speaking ? "Stop audio guide" : "Play audio guide"}
+      className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-leaf/12 px-3 py-1.5 text-xs font-semibold text-leaf transition-transform active:scale-95"
+    >
+      {speaking ? <Square className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+      {speaking ? (hi ? "रोकें" : "Stop") : hi ? "सुनें" : "Play audio"}
+    </button>
+  );
+}
+
+function ArView({
+  image,
+  name,
+  enclosure,
+  facts,
+  hi,
+  onClose,
+}: {
+  image: string;
+  name: string;
+  enclosure: string;
+  facts: readonly string[];
+  hi: boolean;
+  onClose: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 overflow-hidden bg-black">
+      <img
+        src={image}
+        alt={name}
+        className="absolute inset-0 h-full w-full scale-110 object-cover blur-[2px] brightness-75"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-leaf-deep/30 via-transparent to-foreground/50" />
+
+      <div className="pointer-events-none absolute inset-6 rounded-3xl border-2 border-primary-foreground/40" />
+      <span className="absolute left-6 top-6 rounded-full bg-destructive/90 px-3 py-1 text-[10px] font-bold tracking-widest text-destructive-foreground">
+        ● AR LIVE
+      </span>
+
+      <button
+        onClick={onClose}
+        aria-label="Close AR view"
+        className="absolute right-6 top-6 grid h-10 w-10 place-items-center rounded-full bg-card/90 shadow-float"
+      >
+        <X className="h-5 w-5" />
+      </button>
+
+      <div className="absolute inset-x-6 bottom-10">
+        <div className="rounded-3xl border border-primary-foreground/30 bg-card/85 p-4 shadow-float backdrop-blur">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-leaf">
+            {hi ? "एआर लेबल" : "AR label"} · {enclosure}
+          </p>
+          <h2 className="mt-1 text-xl font-semibold">{name}</h2>
+          <ul className="mt-2 space-y-1.5">
+            {facts.map((f) => (
+              <li key={f} className="flex gap-2 text-sm text-muted-foreground">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sun" />
+                {f}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
   );
 }
 
