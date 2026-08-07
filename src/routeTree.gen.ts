@@ -20,6 +20,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as VisitRouteImport } from './routes/visit'
 import { Route as AnimalsIndexRouteImport } from './routes/animals.index'
 import { Route as AnimalsAnimalIdRouteImport } from './routes/animals.$animalId'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -76,6 +77,11 @@ const AnimalsAnimalIdRoute = AnimalsAnimalIdRouteImport.update({
   path: '/animals/$animalId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
+  '/api/chat': typeof ApiChatRoute
   '/animals/': typeof AnimalsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
+  '/api/chat': typeof ApiChatRoute
   '/animals': typeof AnimalsIndexRoute
 }
 export interface FileRoutesById {
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/visit': typeof VisitRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
+  '/api/chat': typeof ApiChatRoute
   '/animals/': typeof AnimalsIndexRoute
 }
 export interface FileRouteTypes {
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/visit'
     | '/animals/$animalId'
+    | '/api/chat'
     | '/animals/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/visit'
     | '/animals/$animalId'
+    | '/api/chat'
     | '/animals'
   id:
     | '__root__'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/visit'
     | '/animals/$animalId'
+    | '/api/chat'
     | '/animals/'
   fileRoutesById: FileRoutesById
 }
@@ -170,6 +182,7 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   VisitRoute: typeof VisitRoute
   AnimalsAnimalIdRoute: typeof AnimalsAnimalIdRoute
+  ApiChatRoute: typeof ApiChatRoute
   AnimalsIndexRoute: typeof AnimalsIndexRoute
 }
 
@@ -252,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnimalsAnimalIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -266,8 +286,19 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   VisitRoute: VisitRoute,
   AnimalsAnimalIdRoute: AnimalsAnimalIdRoute,
+  ApiChatRoute: ApiChatRoute,
   AnimalsIndexRoute: AnimalsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
