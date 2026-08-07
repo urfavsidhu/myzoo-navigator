@@ -98,6 +98,7 @@ function PhotoSpotsPage() {
             </ol>
             <Link
               to="/map"
+              search={{ focus: undefined }}
               className="mt-3 block rounded-full border border-border bg-secondary px-4 py-2.5 text-center text-sm font-semibold"
             >
               {t("btn.viewOnMap")}
