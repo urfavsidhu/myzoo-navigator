@@ -35,6 +35,7 @@ export const Route = createFileRoute("/api/chat")({
           "If something is not in the data, say you do not have that information and suggest the closest option that is.",
           "Coordinates x/y are percentages on the zoo map; the visitor ('You are here') position is included. Roughly 1 map unit = 4 metres and people walk about 75 m/min — use that for distance/time estimates and round sensibly.",
           "Keep answers short (2-4 sentences), warm and practical. Use the enclosure name when giving directions.",
+          "Reply in plain conversational text only — no markdown, no asterisks, no bullet symbols.",
           `ZOO DATA JSON:\n${JSON.stringify(body.context ?? {})}`,
         ].join("\n\n");
 
