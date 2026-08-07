@@ -217,7 +217,7 @@ function InfoRow({
   value: string;
 }) {
   return (
-    <div className="flex gap-3 rounded-2xl border border-border bg-card p-3 shadow-card">
+    <div className="kid-card flex gap-3 rounded-2xl border border-border bg-card p-3 shadow-card">
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-leaf/12 text-leaf">
         <Icon className="h-4 w-4" />
       </span>
