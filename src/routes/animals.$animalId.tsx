@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Camera, Clock, Leaf, MapPin, Square, Utensils, Volume2, X } from "lucide-react";
 import { AppShell } from "@/components/zoo/AppShell";
 import { useZoo } from "@/lib/zoo-context";
