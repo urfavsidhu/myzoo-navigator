@@ -1,9 +1,27 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Clock, Info, Sparkles, Ticket, Ticket as TicketIcon, Utensils } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { Clock, Info, Sparkles, Ticket as TicketIcon, Utensils } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/zoo/AppShell";
 import { useZoo } from "@/lib/zoo-context";
-import { bookingUrl, feedingSchedule, weekDays } from "@/data/zoo-data";
+import { useAuth } from "@/lib/auth-context";
+import { supabase } from "@/integrations/supabase/client";
+import { feedingSchedule, weekDays, type Tickets } from "@/data/zoo-data";
 import { cn } from "@/lib/utils";
+
+const TICKET_TYPES: Array<{ key: keyof Tickets; label: string }> = [
+  { key: "adult", label: "Adult" },
+  { key: "child", label: "Child" },
+  { key: "student", label: "Student" },
+  { key: "foreign", label: "Foreign Tourist" },
+];
+
+/** "₹60" -> 60 */
+const priceNumber = (value: string) => Number(value.replace(/[^0-9.]/g, "")) || 0;
+
+const todayISO = () => new Date().toISOString().slice(0, 10);
+
+const refCode = () =>
+  `ZOO-${Math.random().toString(36).slice(2, 6).toUpperCase()}-${Date.now().toString().slice(-4)}`;
 
 export const Route = createFileRoute("/visit")({
   head: () => ({
@@ -56,15 +74,9 @@ function VisitPage() {
               </div>
             ))}
           </div>
-          <a
-            href={bookingUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-transform active:scale-95"
-          >
-            <Ticket className="h-4 w-4" /> Book online
-          </a>
         </section>
+
+        <BookingForm />
 
         <section className="rounded-3xl border border-border bg-card p-4 shadow-card">
           <p className="flex items-center gap-2 text-sm font-semibold">
@@ -154,5 +166,157 @@ function VisitPage() {
         </section>
       </div>
     </AppShell>
+  );
+}
+
+function BookingForm() {
+  const { zoo, zooId } = useZoo();
+  const { user } = useAuth();
+  const [date, setDate] = useState(todayISO());
+  const [type, setType] = useState<keyof Tickets>("adult");
+  const [qty, setQty] = useState(1);
+  const [busy, setBusy] = useState(false);
+  const [confirmed, setConfirmed] = useState<{
+    zooName: string;
+    date: string;
+    type: string;
+    qty: number;
+    total: number;
+    code: string;
+  } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const unitPrice = priceNumber(zoo.tickets[type]);
+  const total = unitPrice * qty;
+  const typeLabel = TICKET_TYPES.find((t) => t.key === type)?.label ?? "Adult";
+
+  if (!user) {
+    return (
+      <section className="rounded-3xl border border-border bg-card p-4 shadow-card">
+        <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          <TicketIcon className="h-4 w-4 text-leaf" /> Book tickets
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Log in to book tickets online — they'll be saved to your profile.
+        </p>
+        <Link
+          to="/login"
+          className="mt-3 flex w-full items-center justify-center rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground"
+        >
+          Log in to book
+        </Link>
+      </section>
+    );
+  }
+
+  if (confirmed) {
+    return (
+      <section className="rounded-3xl border border-leaf/40 bg-leaf/10 p-4 shadow-card">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-leaf-deep">
+          Ticket confirmed
+        </h2>
+        <div className="mt-2 rounded-2xl border border-dashed border-leaf/50 bg-card p-4">
+          <p className="text-base font-semibold">{confirmed.zooName}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {confirmed.date} · {confirmed.type} × {confirmed.qty}
+          </p>
+          <p className="mt-2 text-lg font-semibold text-leaf-deep">₹{confirmed.total}</p>
+          <p className="mt-2 font-mono text-xs text-muted-foreground">Ref: {confirmed.code}</p>
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          This ticket is only valid on {confirmed.date}. Find it anytime under My Tickets on your
+          profile.
+        </p>
+        <button
+          onClick={() => setConfirmed(null)}
+          className="mt-3 w-full rounded-full border border-border px-4 py-2.5 text-sm font-semibold"
+        >
+          Book another
+        </button>
+      </section>
+    );
+  }
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    const code = refCode();
+    const { error: insertError } = await supabase.from("tickets").insert({
+      user_id: user.id,
+      zoo_id: zooId,
+      visit_date: date,
+      ticket_type: typeLabel,
+      quantity: qty,
+      total_price: total,
+      reference_code: code,
+    });
+    setBusy(false);
+    if (insertError) {
+      setError(insertError.message);
+      return;
+    }
+    setConfirmed({ zooName: zoo.name, date, type: typeLabel, qty, total, code });
+  };
+
+  return (
+    <section className="rounded-3xl border border-border bg-card p-4 shadow-card">
+      <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+        <TicketIcon className="h-4 w-4 text-leaf" /> Book tickets
+      </h2>
+      <form onSubmit={submit} className="mt-3 space-y-3">
+        <div>
+          <label className="text-xs font-semibold text-muted-foreground">Visit date</label>
+          <input
+            type="date"
+            required
+            min={todayISO()}
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="mt-1 w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none"
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-semibold text-muted-foreground">Ticket type</label>
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value as keyof Tickets)}
+              className="mt-1 w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none"
+            >
+              {TICKET_TYPES.map((t) => (
+                <option key={t.key} value={t.key}>
+                  {t.label} — {zoo.tickets[t.key]}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-muted-foreground">Quantity</label>
+            <input
+              type="number"
+              min={1}
+              max={20}
+              required
+              value={qty}
+              onChange={(e) => setQty(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
+              className="mt-1 w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none"
+            />
+          </div>
+        </div>
+        <div className="flex items-center justify-between rounded-2xl bg-secondary/60 px-4 py-3">
+          <span className="text-sm font-medium text-muted-foreground">Total</span>
+          <span className="text-lg font-semibold text-leaf-deep">₹{total}</span>
+        </div>
+        {error ? <p className="text-xs text-destructive">{error}</p> : null}
+        <button
+          type="submit"
+          disabled={busy}
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-transform active:scale-95 disabled:opacity-60"
+        >
+          <TicketIcon className="h-4 w-4" /> {busy ? "Booking…" : "Confirm booking"}
+        </button>
+      </form>
+    </section>
   );
 }
