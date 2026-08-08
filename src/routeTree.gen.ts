@@ -13,10 +13,13 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as FacilitiesRouteImport } from './routes/facilities'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as HuntRouteImport } from './routes/hunt'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as PhotoSpotsRouteImport } from './routes/photo-spots'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as VisitRouteImport } from './routes/visit'
 import { Route as AnimalsIndexRouteImport } from './routes/animals.index'
 import { Route as AnimalsAnimalIdRouteImport } from './routes/animals.$animalId'
@@ -42,6 +45,11 @@ const HuntRoute = HuntRouteImport.update({
   path: '/hunt',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MapRoute = MapRouteImport.update({
   id: '/map',
   path: '/map',
@@ -52,6 +60,11 @@ const PhotoSpotsRoute = PhotoSpotsRouteImport.update({
   path: '/photo-spots',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QuizRoute = QuizRouteImport.update({
   id: '/quiz',
   path: '/quiz',
@@ -60,6 +73,11 @@ const QuizRoute = QuizRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VisitRoute = VisitRouteImport.update({
@@ -88,10 +106,13 @@ export interface FileRoutesByFullPath {
   '/facilities': typeof FacilitiesRoute
   '/favorites': typeof FavoritesRoute
   '/hunt': typeof HuntRoute
+  '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/photo-spots': typeof PhotoSpotsRoute
+  '/profile': typeof ProfileRoute
   '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
+  '/signup': typeof SignupRoute
   '/visit': typeof VisitRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
   '/api/chat': typeof ApiChatRoute
@@ -102,10 +123,13 @@ export interface FileRoutesByTo {
   '/facilities': typeof FacilitiesRoute
   '/favorites': typeof FavoritesRoute
   '/hunt': typeof HuntRoute
+  '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/photo-spots': typeof PhotoSpotsRoute
+  '/profile': typeof ProfileRoute
   '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
+  '/signup': typeof SignupRoute
   '/visit': typeof VisitRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
   '/api/chat': typeof ApiChatRoute
@@ -117,10 +141,13 @@ export interface FileRoutesById {
   '/facilities': typeof FacilitiesRoute
   '/favorites': typeof FavoritesRoute
   '/hunt': typeof HuntRoute
+  '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/photo-spots': typeof PhotoSpotsRoute
+  '/profile': typeof ProfileRoute
   '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
+  '/signup': typeof SignupRoute
   '/visit': typeof VisitRoute
   '/animals/$animalId': typeof AnimalsAnimalIdRoute
   '/api/chat': typeof ApiChatRoute
@@ -133,10 +160,13 @@ export interface FileRouteTypes {
     | '/facilities'
     | '/favorites'
     | '/hunt'
+    | '/login'
     | '/map'
     | '/photo-spots'
+    | '/profile'
     | '/quiz'
     | '/search'
+    | '/signup'
     | '/visit'
     | '/animals/$animalId'
     | '/api/chat'
@@ -147,10 +177,13 @@ export interface FileRouteTypes {
     | '/facilities'
     | '/favorites'
     | '/hunt'
+    | '/login'
     | '/map'
     | '/photo-spots'
+    | '/profile'
     | '/quiz'
     | '/search'
+    | '/signup'
     | '/visit'
     | '/animals/$animalId'
     | '/api/chat'
@@ -161,10 +194,13 @@ export interface FileRouteTypes {
     | '/facilities'
     | '/favorites'
     | '/hunt'
+    | '/login'
     | '/map'
     | '/photo-spots'
+    | '/profile'
     | '/quiz'
     | '/search'
+    | '/signup'
     | '/visit'
     | '/animals/$animalId'
     | '/api/chat'
@@ -176,10 +212,13 @@ export interface RootRouteChildren {
   FacilitiesRoute: typeof FacilitiesRoute
   FavoritesRoute: typeof FavoritesRoute
   HuntRoute: typeof HuntRoute
+  LoginRoute: typeof LoginRoute
   MapRoute: typeof MapRoute
   PhotoSpotsRoute: typeof PhotoSpotsRoute
+  ProfileRoute: typeof ProfileRoute
   QuizRoute: typeof QuizRoute
   SearchRoute: typeof SearchRoute
+  SignupRoute: typeof SignupRoute
   VisitRoute: typeof VisitRoute
   AnimalsAnimalIdRoute: typeof AnimalsAnimalIdRoute
   ApiChatRoute: typeof ApiChatRoute
@@ -216,6 +255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HuntRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/map': {
       id: '/map'
       path: '/map'
@@ -230,6 +276,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PhotoSpotsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/quiz': {
       id: '/quiz'
       path: '/quiz'
@@ -242,6 +295,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/visit': {
@@ -280,10 +340,13 @@ const rootRouteChildren: RootRouteChildren = {
   FacilitiesRoute: FacilitiesRoute,
   FavoritesRoute: FavoritesRoute,
   HuntRoute: HuntRoute,
+  LoginRoute: LoginRoute,
   MapRoute: MapRoute,
   PhotoSpotsRoute: PhotoSpotsRoute,
+  ProfileRoute: ProfileRoute,
   QuizRoute: QuizRoute,
   SearchRoute: SearchRoute,
+  SignupRoute: SignupRoute,
   VisitRoute: VisitRoute,
   AnimalsAnimalIdRoute: AnimalsAnimalIdRoute,
   ApiChatRoute: ApiChatRoute,
