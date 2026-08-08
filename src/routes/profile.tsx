@@ -1,12 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Camera, LogOut, Pencil, Trash2 } from "lucide-react";
+import { Camera, LogOut, Pencil, Ticket, Trash2 } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/zoo/AppShell";
 import { StarRating } from "@/components/zoo/StarRating";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { useReviews } from "@/lib/reviews-context";
-import { getAnimal } from "@/data/zoo-data";
+import { getAnimal, getZoo } from "@/data/zoo-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/profile")({
@@ -71,6 +71,7 @@ function ProfilePage() {
           profile={profile}
           onSaved={refreshProfile}
         />
+        <MyTickets userId={user.id} />
         <MyReviews />
         <Reports userId={user.id} />
         <button
@@ -298,6 +299,93 @@ function MyReviews() {
               )}
             </li>
           ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+type TicketRow = {
+  id: string;
+  zoo_id: string;
+  visit_date: string;
+  ticket_type: string;
+  quantity: number;
+  total_price: number;
+  reference_code: string;
+};
+
+function ticketStatus(visitDate: string): { label: string; className: string; faded: boolean } {
+  const today = new Date().toISOString().slice(0, 10);
+  if (visitDate === today) {
+    return { label: "Active", className: "bg-leaf/15 text-leaf-deep", faded: false };
+  }
+  if (visitDate > today) {
+    return { label: "Upcoming", className: "bg-sky-500/15 text-sky-700", faded: false };
+  }
+  return { label: "Expired", className: "bg-secondary text-muted-foreground", faded: true };
+}
+
+function MyTickets({ userId }: { userId: string }) {
+  const [tickets, setTickets] = useState<TicketRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    void (async () => {
+      const { data } = await supabase
+        .from("tickets")
+        .select("id, zoo_id, visit_date, ticket_type, quantity, total_price, reference_code")
+        .eq("user_id", userId)
+        .order("visit_date", { ascending: false });
+      setTickets((data as TicketRow[] | null) ?? []);
+      setLoading(false);
+    })();
+  }, [userId]);
+
+  return (
+    <section className="rounded-3xl border border-border bg-card p-4 shadow-card">
+      <h2 className="flex items-center gap-2 text-base font-semibold">
+        <Ticket className="h-4 w-4 text-leaf" /> My tickets
+      </h2>
+      {loading ? (
+        <p className="mt-2 text-sm text-muted-foreground">Loading…</p>
+      ) : tickets.length === 0 ? (
+        <p className="mt-2 text-sm text-muted-foreground">
+          No tickets yet — book one from the Tickets &amp; Timings page.
+        </p>
+      ) : (
+        <ul className="mt-3 space-y-2">
+          {tickets.map((t) => {
+            const status = ticketStatus(t.visit_date);
+            const zooName = getZoo(t.zoo_id)?.name ?? t.zoo_id;
+            return (
+              <li
+                key={t.id}
+                className={cn(
+                  "rounded-2xl bg-secondary/60 p-3",
+                  status.faded && "opacity-60",
+                )}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <p className="truncate text-sm font-semibold">{zooName}</p>
+                  <span
+                    className={cn(
+                      "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                      status.className,
+                    )}
+                  >
+                    {status.label}
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {t.visit_date} · {t.ticket_type} × {t.quantity} · ₹{t.total_price}
+                </p>
+                <p className="mt-1 font-mono text-[10px] text-muted-foreground">
+                  Ref: {t.reference_code}
+                </p>
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>
