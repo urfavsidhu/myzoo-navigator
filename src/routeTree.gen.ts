@@ -16,6 +16,7 @@ import { Route as HuntRouteImport } from './routes/hunt'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as PhotoSpotsRouteImport } from './routes/photo-spots'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -57,6 +58,11 @@ const MapRoute = MapRouteImport.update({
 const PhotoSpotsRoute = PhotoSpotsRouteImport.update({
   id: '/photo-spots',
   path: '/photo-spots',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuizRoute = QuizRouteImport.update({
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/photo-spots': typeof PhotoSpotsRoute
+  '/profile': typeof ProfileRoute
   '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/photo-spots': typeof PhotoSpotsRoute
+  '/profile': typeof ProfileRoute
   '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
@@ -136,6 +144,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/photo-spots': typeof PhotoSpotsRoute
+  '/profile': typeof ProfileRoute
   '/quiz': typeof QuizRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
@@ -154,6 +163,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/map'
     | '/photo-spots'
+    | '/profile'
     | '/quiz'
     | '/search'
     | '/signup'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/map'
     | '/photo-spots'
+    | '/profile'
     | '/quiz'
     | '/search'
     | '/signup'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/map'
     | '/photo-spots'
+    | '/profile'
     | '/quiz'
     | '/search'
     | '/signup'
@@ -203,6 +215,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MapRoute: typeof MapRoute
   PhotoSpotsRoute: typeof PhotoSpotsRoute
+  ProfileRoute: typeof ProfileRoute
   QuizRoute: typeof QuizRoute
   SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
@@ -261,6 +274,13 @@ declare module '@tanstack/react-router' {
       path: '/photo-spots'
       fullPath: '/photo-spots'
       preLoaderRoute: typeof PhotoSpotsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quiz': {
@@ -323,6 +343,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MapRoute: MapRoute,
   PhotoSpotsRoute: PhotoSpotsRoute,
+  ProfileRoute: ProfileRoute,
   QuizRoute: QuizRoute,
   SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,

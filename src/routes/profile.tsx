@@ -64,7 +64,7 @@ function ProfilePage() {
 
   return (
     <AppShell>
-      <PageHeader title="My Profile" subtitle={user.email ?? undefined} />
+      <PageHeader title="My Profile" subtitle={user.email ?? ""} />
       <div className="space-y-4 px-4 pb-6">
         <ProfileForm
           userId={user.id}
