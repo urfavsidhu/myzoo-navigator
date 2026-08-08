@@ -16,6 +16,7 @@ import { FavoritesProvider } from "../lib/favorites-context";
 import { AppPrefsProvider } from "../lib/app-context";
 import { HuntProvider } from "../lib/hunt-context";
 import { ReviewsProvider } from "../lib/reviews-context";
+import { AuthProvider } from "../lib/auth-context";
 
 function NotFoundComponent() {
   return (
@@ -136,16 +137,18 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AppPrefsProvider>
-        <ZooProvider>
-          <FavoritesProvider>
-            <HuntProvider>
-              <ReviewsProvider>
-                {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-                <Outlet />
-              </ReviewsProvider>
-            </HuntProvider>
-          </FavoritesProvider>
-        </ZooProvider>
+        <AuthProvider>
+          <ZooProvider>
+            <FavoritesProvider>
+              <HuntProvider>
+                <ReviewsProvider>
+                  {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+                  <Outlet />
+                </ReviewsProvider>
+              </HuntProvider>
+            </FavoritesProvider>
+          </ZooProvider>
+        </AuthProvider>
       </AppPrefsProvider>
     </QueryClientProvider>
   );

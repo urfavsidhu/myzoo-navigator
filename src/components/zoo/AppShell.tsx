@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, Home, Languages, Map, Moon, PawPrint, Signpost, Sun, Ticket } from "lucide-react";
+import { Heart, Home, Languages, LogIn, Map, Moon, PawPrint, Signpost, Sun, Ticket, User } from "lucide-react";
 import type { ReactNode } from "react";
 import { EmergencyButton } from "@/components/zoo/EmergencyButton";
 import { ChatAssistant } from "@/components/zoo/ChatAssistant";
 import { useAppPrefs } from "@/lib/app-context";
+import { useAuth } from "@/lib/auth-context";
 import type { TKey } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +19,7 @@ const tabs = [
 
 function TopBar() {
   const { lang, toggleLang, dark, toggleDark, kidMode } = useAppPrefs();
+  const { user, profile } = useAuth();
   return (
     <div className="sticky top-0 z-40 flex items-center justify-between gap-2 border-b border-border/60 bg-background/85 px-4 py-2 backdrop-blur">
       <Link to="/" className="flex items-center gap-2">
@@ -44,6 +46,27 @@ function TopBar() {
         >
           {dark ? <Sun className="h-4 w-4 text-sun" /> : <Moon className="h-4 w-4 text-leaf" />}
         </button>
+        {user ? (
+          <Link
+            to="/profile"
+            aria-label="Your profile"
+            className="grid h-8 w-8 place-items-center overflow-hidden rounded-full border border-border bg-card shadow-card"
+          >
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <User className="h-4 w-4 text-leaf" />
+            )}
+          </Link>
+        ) : (
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground shadow-card transition-transform active:scale-95"
+          >
+            <LogIn className="h-3.5 w-3.5" />
+            {lang === "hi" ? "लॉग इन" : "Log in"}
+          </Link>
+        )}
       </div>
     </div>
   );

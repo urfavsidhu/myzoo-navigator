@@ -10,6 +10,7 @@ import { CrowdBadge } from "@/components/zoo/CrowdBadge";
 import { StarRating } from "@/components/zoo/StarRating";
 import { useReviews } from "@/lib/reviews-context";
 import { useAppPrefs } from "@/lib/app-context";
+import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/animals/$animalId")({
   loader: ({ params }) => {
@@ -270,19 +271,22 @@ function ArView({
 }
 
 function ReviewsSection({ animalId }: { animalId: string }) {
-  const { t } = useAppPrefs();
-  const { reviewsFor, averageFor, addReview } = useReviews();
+  const { t, lang } = useAppPrefs();
+  const hi = lang === "hi";
+  const { user } = useAuth();
+  const { reviewsFor, averageFor, addReview, loading } = useReviews();
   const list = reviewsFor(animalId);
   const avg = averageFor(animalId);
-  const [name, setName] = useState("");
   const [text, setText] = useState("");
   const [rating, setRating] = useState(5);
+  const [busy, setBusy] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
-    addReview({ animalId, name: name.trim() || "Visitor", rating, text: text.trim() });
-    setName("");
+    setBusy(true);
+    await addReview({ animalId, rating, text: text.trim() });
+    setBusy(false);
     setText("");
     setRating(5);
   };
@@ -300,7 +304,9 @@ function ReviewsSection({ animalId }: { animalId: string }) {
       </div>
 
       <div className="mt-3 space-y-3">
-        {list.length === 0 ? (
+        {loading ? (
+          <p className="text-sm text-muted-foreground">…</p>
+        ) : list.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("label.noReviews")}</p>
         ) : (
           list.map((r) => (
@@ -315,27 +321,31 @@ function ReviewsSection({ animalId }: { animalId: string }) {
         )}
       </div>
 
-      <form onSubmit={submit} className="mt-4 space-y-2 border-t border-border pt-4">
-        <StarRating value={rating} size="lg" onChange={setRating} />
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder={t("label.yourName")}
-          className="w-full rounded-full border border-border bg-background px-4 py-2.5 text-sm outline-none"
-        />
-        <input
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder={t("label.yourReview")}
-          className="w-full rounded-full border border-border bg-background px-4 py-2.5 text-sm outline-none"
-        />
-        <button
-          type="submit"
-          className="w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-transform active:scale-95"
+      {user ? (
+        <form onSubmit={submit} className="mt-4 space-y-2 border-t border-border pt-4">
+          <StarRating value={rating} size="lg" onChange={setRating} />
+          <input
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={t("label.yourReview")}
+            className="w-full rounded-full border border-border bg-background px-4 py-2.5 text-sm outline-none"
+          />
+          <button
+            type="submit"
+            disabled={busy}
+            className="w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-transform active:scale-95 disabled:opacity-60"
+          >
+            {t("btn.submit")}
+          </button>
+        </form>
+      ) : (
+        <Link
+          to="/login"
+          className="mt-4 flex w-full items-center justify-center rounded-full border border-border bg-secondary px-4 py-2.5 text-sm font-semibold"
         >
-          {t("btn.submit")}
-        </button>
-      </form>
+          {hi ? "समीक्षा लिखने के लिए लॉग इन करें" : "Log in to leave a review"}
+        </Link>
+      )}
     </section>
   );
 }
