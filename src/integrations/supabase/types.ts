@@ -77,34 +77,42 @@ export type Database = {
         }
         Relationships: []
       }
-      reviews: {
+      tickets: {
         Row: {
-          animal_id: string
           created_at: string
           id: string
-          rating: number
-          text: string
+          quantity: number
+          reference_code: string
+          ticket_type: string
+          total_price: number
           user_id: string
+          visit_date: string
+          zoo_id: string
         }
         Insert: {
-          animal_id: string
           created_at?: string
           id?: string
-          rating: number
-          text: string
+          quantity: number
+          reference_code: string
+          ticket_type: string
+          total_price: number
           user_id: string
+          visit_date: string
+          zoo_id: string
         }
         Update: {
-          animal_id?: string
           created_at?: string
           id?: string
-          rating?: number
-          text?: string
+          quantity?: number
+          reference_code?: string
+          ticket_type?: string
+          total_price?: number
           user_id?: string
+          visit_date?: string
+          zoo_id?: string
         }
         Relationships: []
       }
-    }
     Views: {
       [_ in never]: never
     }
