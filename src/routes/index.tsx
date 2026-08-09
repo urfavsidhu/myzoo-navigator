@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  Baby,
   Camera,
   Clock,
   Compass,
@@ -64,7 +63,7 @@ const moreLinks = [
 
 function Index() {
   const { zoo, zooId, setZooId } = useZoo();
-  const { t, lang, kidMode, toggleKidMode } = useAppPrefs();
+  const { t, lang } = useAppPrefs();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const count = zooAnimals(zooId).length;
@@ -131,35 +130,6 @@ function Index() {
             className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
         </form>
-
-        <button
-          onClick={toggleKidMode}
-          className={cn(
-            "flex w-full items-center gap-3 rounded-3xl border p-4 text-left shadow-card transition-transform active:scale-95",
-            kidMode ? "border-sun bg-sun/15" : "border-border bg-card",
-          )}
-        >
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-sun/25 text-clay">
-            <Baby className="h-5 w-5" />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-sm font-semibold">{t("label.kidMode")}</span>
-            <span className="block text-xs text-muted-foreground">{t("label.kidModeHint")}</span>
-          </span>
-          <span
-            className={cn(
-              "relative h-6 w-11 shrink-0 rounded-full transition-colors",
-              kidMode ? "bg-leaf" : "bg-secondary",
-            )}
-          >
-            <span
-              className={cn(
-                "absolute top-0.5 h-5 w-5 rounded-full bg-card shadow-card transition-all",
-                kidMode ? "left-[1.375rem]" : "left-0.5",
-              )}
-            />
-          </span>
-        </button>
 
         <div className="grid grid-cols-4 gap-3">
           {quickLinks.map(({ to, label, icon: Icon }) => (
