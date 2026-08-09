@@ -53,7 +53,7 @@ function AnimalsPage() {
             <Link
               to="/animals/$animalId"
               params={{ animalId: a.id }}
-              className="kid-card block overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-transform active:scale-95"
+              className="block overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-transform active:scale-95"
             >
               <div className="relative">
                 <img src={a.image} alt={a.name} loading="lazy" className="h-28 w-full object-cover" />
