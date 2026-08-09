@@ -18,7 +18,7 @@ const tabs = [
 ] as const;
 
 function TopBar() {
-  const { lang, toggleLang, dark, toggleDark, kidMode } = useAppPrefs();
+  const { lang, toggleLang, dark, toggleDark } = useAppPrefs();
   const { user, profile } = useAuth();
   return (
     <div className="sticky top-0 z-40 flex items-center justify-between gap-2 border-b border-border/60 bg-background/85 px-4 py-2 backdrop-blur">
@@ -26,7 +26,7 @@ function TopBar() {
         <span className="grid h-7 w-7 place-items-center rounded-full bg-leaf/15 text-leaf">
           <PawPrint className="h-4 w-4" />
         </span>
-        <span className={cn("font-display text-sm font-semibold", kidMode && "text-base")}>
+        <span className="font-display text-sm font-semibold">
           {lang === "hi" ? "स्मार्ट ज़ू" : "Smart Zoo"}
         </span>
       </Link>
@@ -73,9 +73,9 @@ function TopBar() {
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { t, kidMode } = useAppPrefs();
+  const { t } = useAppPrefs();
   return (
-    <div className={cn("min-h-screen bg-background pb-24", kidMode && "kid-mode")}>
+    <div className="min-h-screen bg-background pb-24">
       <div className="mx-auto w-full max-w-2xl">
         <TopBar />
         {children}
