@@ -77,6 +77,33 @@ export type Database = {
         }
         Relationships: []
       }
+      reviews: {
+        Row: {
+          animal_id: string
+          created_at: string
+          id: string
+          rating: number
+          text: string
+          user_id: string
+        }
+        Insert: {
+          animal_id: string
+          created_at?: string
+          id?: string
+          rating: number
+          text: string
+          user_id: string
+        }
+        Update: {
+          animal_id?: string
+          created_at?: string
+          id?: string
+          rating?: number
+          text?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       tickets: {
         Row: {
           created_at: string
@@ -113,6 +140,7 @@ export type Database = {
         }
         Relationships: []
       }
+    }
     Views: {
       [_ in never]: never
     }
