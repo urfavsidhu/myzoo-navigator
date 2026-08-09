@@ -140,12 +140,49 @@ export type Database = {
         }
         Relationships: []
       }
+      admins: {
+        Row: {
+          email: string
+          id: string
+        }
+        Insert: {
+          email: string
+          id?: string
+        }
+        Update: {
+          email?: string
+          id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      admin_list_users: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          email: string
+          full_name: string | null
+          gender: string | null
+          created_at: string
+          review_count: number
+          ticket_count: number
+        }[]
+      }
+      admin_signups_per_day: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          day: string
+          count: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
