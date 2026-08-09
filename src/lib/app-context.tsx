@@ -16,8 +16,7 @@ type AppPrefsValue = {
   t: (key: TKey) => string;
   dark: boolean;
   toggleDark: () => void;
-  kidMode: boolean;
-  toggleKidMode: () => void;
+
 };
 
 const AppPrefsContext = createContext<AppPrefsValue | null>(null);
