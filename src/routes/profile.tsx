@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Camera, LogOut, Pencil, Ticket, Trash2 } from "lucide-react";
+import { Camera, LogOut, Pencil, ShieldCheck, Ticket, Trash2 } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/zoo/AppShell";
 import { StarRating } from "@/components/zoo/StarRating";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,6 +36,18 @@ type Report = {
 function ProfilePage() {
   const navigate = useNavigate();
   const { user, profile, loading, refreshProfile, signOut } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setIsAdmin(false);
+      return;
+    }
+    void (async () => {
+      const { data } = await supabase.rpc("is_admin");
+      setIsAdmin(Boolean(data));
+    })();
+  }, [user]);
 
   if (loading) {
     return (
@@ -74,6 +86,14 @@ function ProfilePage() {
         <MyTickets userId={user.id} />
         <MyReviews />
         <Reports userId={user.id} />
+        {isAdmin ? (
+          <Link
+            to="/admin"
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-leaf/40 bg-leaf/10 px-4 py-3 text-sm font-semibold text-leaf-deep"
+          >
+            <ShieldCheck className="h-4 w-4" /> Admin dashboard
+          </Link>
+        ) : null}
         <button
           onClick={async () => {
             await signOut();
