@@ -16,8 +16,6 @@ type AppPrefsValue = {
   t: (key: TKey) => string;
   dark: boolean;
   toggleDark: () => void;
-  kidMode: boolean;
-  toggleKidMode: () => void;
 };
 
 const AppPrefsContext = createContext<AppPrefsValue | null>(null);
@@ -25,7 +23,6 @@ const AppPrefsContext = createContext<AppPrefsValue | null>(null);
 export function AppPrefsProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<Lang>("en");
   const [dark, setDark] = useState(false);
-  const [kidMode, setKidMode] = useState(false);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -42,10 +39,8 @@ export function AppPrefsProvider({ children }: { children: ReactNode }) {
       t,
       dark,
       toggleDark: () => setDark((d) => !d),
-      kidMode,
-      toggleKidMode: () => setKidMode((k) => !k),
     }),
-    [lang, t, dark, kidMode],
+    [lang, t, dark],
   );
 
   return <AppPrefsContext.Provider value={value}>{children}</AppPrefsContext.Provider>;
