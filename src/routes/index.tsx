@@ -78,13 +78,13 @@ function Index() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-leaf-deep/95 via-leaf-deep/40 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-5">
-          <p className="text-xs font-semibold tracking-[0.2em] text-sun uppercase">
-            Uttar Pradesh
+        <p className="text-xs font-semibold tracking-[0.2em] text-sun uppercase">
+          Uttar Pradesh
           </p>
-          <h1 className="mt-1 text-3xl font-semibold text-primary-foreground">
-            {t("page.home")}
-          </h1>
-          <p className="mt-1 text-sm text-primary-foreground/80">
+            <h1 className="mt-1 text-3xl font-semibold text-white">
+              {t("page.home")}
+            </h1>
+          <p className="mt-1 text-sm text-white/80">
             Find every animal, washroom and shortcut inside the zoo.
           </p>
         </div>
