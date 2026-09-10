@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { AlertTriangle, DoorOpen, HeartPulse, Navigation, Phone, X } from "lucide-react";
 import { emergencyContacts, facilities } from "@/data/zoo-data";
+import { DraggableFab } from "@/components/zoo/DraggableFab";
 
 export function EmergencyButton() {
   const [open, setOpen] = useState(false);
@@ -11,14 +12,15 @@ export function EmergencyButton() {
 
   return (
     <>
-      <button
-        type="button"
+      <DraggableFab
         onClick={() => setOpen(true)}
-        aria-label="Emergency help"
-        className="fixed bottom-24 right-4 z-40 grid h-14 w-14 place-items-center rounded-full bg-destructive text-destructive-foreground shadow-float transition-transform active:scale-90"
+        ariaLabel="Emergency help"
+        storageKey="fab-emergency-pos"
+        defaultPositionClassName="bottom-24 right-4"
+        colorClassName="bg-destructive text-destructive-foreground"
       >
         <AlertTriangle className="h-6 w-6" />
-      </button>
+      </DraggableFab>
 
       {open ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center">
@@ -48,7 +50,7 @@ export function EmergencyButton() {
 
             <div className="mt-4 space-y-2">
               {emergencyContacts.map((c) => (
-                <a
+                
                   key={c.id}
                   href={`tel:${c.number.replace(/\s/g, "")}`}
                   className="flex items-center gap-3 rounded-2xl border border-destructive/30 bg-destructive/5 p-3"
