@@ -357,28 +357,6 @@ export const facilities: Facility[] = [
 
 export const zoos: Zoo[] = [
   {
-    id: "lucknow",
-    name: "Nawab Wajid Ali Shah Zoological Garden",
-    city: "Lucknow",
-    image: img("photo-1534567110243-8875d64ca8ff"),
-    hours: "8:00 AM – 5:00 PM",
-    closedOn: "Mondays",
-    ticket: "₹60 adult · ₹30 child",
-    tickets: {
-      adult: "₹60",
-      child: "₹30",
-      student: "₹40",
-      foreign: "₹300",
-    },
-    shows: [
-      { id: "lucknow-0", name: "Elephant Bath Show", time: "11:30 AM", venue: "Elephant Yard, Zone B" },
-      { id: "lucknow-1", name: "Keeper Talk — Big Cats", time: "4:15 PM", venue: "Tiger Enclosure, Zone A" },
-      { id: "lucknow-2", name: "Bird Flight Display", time: "10:15 AM", venue: "Aviary Walk, Zone D" },
-    ],
-    blurb: "Uttar Pradesh's oldest zoo, spread over 71 acres in the heart of Lucknow.",
-    animalIds: animals.map((a) => a.id),
-  },
-  {
     id: "kanpur",
     name: "Kanpur Zoological Park",
     city: "Kanpur",
@@ -408,69 +386,6 @@ export const zoos: Zoo[] = [
       "rhesus-macaque",
       "indian-peafowl",
       "mugger-crocodile",
-      "hippopotamus",
-    ],
-  },
-  {
-    id: "etawah",
-    name: "Etawah Safari Park",
-    city: "Etawah",
-    image: img("photo-1549366021-9f761d450615"),
-    hours: "9:00 AM – 5:00 PM",
-    closedOn: "Tuesdays",
-    ticket: "₹150 adult · ₹75 child",
-    tickets: {
-      adult: "₹150",
-      child: "₹75",
-      student: "₹100",
-      foreign: "₹500",
-    },
-    shows: [
-      { id: "etawah-0", name: "Lion Safari Drive", time: "9:30 AM", venue: "Lion Safari, Zone A" },
-      { id: "etawah-1", name: "Keeper Talk — Leopard", time: "4:00 PM", venue: "Leopard Rock, Zone A" },
-      { id: "etawah-2", name: "Gharial Feeding Demo", time: "2:30 PM", venue: "Gharial Channel, Zone C" },
-    ],
-    blurb: "A lion breeding and safari park on the Chambal ravines.",
-    animalIds: [
-      "asiatic-lion",
-      "royal-bengal-tiger",
-      "indian-leopard",
-      "sloth-bear",
-      "spotted-deer",
-      "gharial",
-      "mugger-crocodile",
-      "indian-peafowl",
-    ],
-  },
-  {
-    id: "gorakhpur",
-    name: "Shaheed Ashfaqullah Khan Zoological Park",
-    city: "Gorakhpur",
-    image: img("photo-1520315342629-6ea920342047"),
-    hours: "9:00 AM – 5:00 PM",
-    closedOn: "Mondays",
-    ticket: "₹70 adult · ₹35 child",
-    tickets: {
-      adult: "₹70",
-      child: "₹35",
-      student: "₹45",
-      foreign: "₹350",
-    },
-    shows: [
-      { id: "gorakhpur-0", name: "Night House Walk", time: "10:30 AM", venue: "Night House" },
-      { id: "gorakhpur-1", name: "Keeper Talk — Tigers", time: "4:30 PM", venue: "Tiger Enclosure, Zone A" },
-      { id: "gorakhpur-2", name: "Deer Feeding Demo", time: "9:30 AM", venue: "Deer Meadow, Zone D" },
-    ],
-    blurb: "The newest zoo in the state, with wide walkways and a night-house.",
-    animalIds: [
-      "royal-bengal-tiger",
-      "indian-leopard",
-      "sloth-bear",
-      "spotted-deer",
-      "rhesus-macaque",
-      "indian-peafowl",
-      "gharial",
-      "giraffe",
       "hippopotamus",
     ],
   },
@@ -629,17 +544,12 @@ const hindiCopy: Record<string, { nameHi: string; factsHi: string[] }> = {
     nameHi: "दरियाई घोड़ा",
     factsHi: ["इनकी त्वचा से लाल रंग का प्राकृतिक सनस्क्रीन निकलता है।"],
   },
-  gharial: {
-    nameHi: "घड़ियाल",
-    factsHi: ["नर घड़ियाल की नाक पर घड़े जैसा उभार होता है।"],
-  },
 };
 
 const crowdLevels: Record<string, CrowdLevel> = {
   "royal-bengal-tiger": "Heavy",
   "asiatic-lion": "Heavy",
   "indian-elephant": "Medium",
-  giraffe: "Medium",
   "indian-peafowl": "Low",
 };
 
@@ -666,11 +576,12 @@ export const crowdLabelHi: Record<CrowdLevel, string> = {
 };
 
 const weatherByZoo: Record<string, Weather> = {
-  lucknow: { tempC: 34, condition: "sunny", rainChance: 10, summary: "Clear and warm" },
   kanpur: { tempC: 31, condition: "cloudy", rainChance: 35, summary: "Partly cloudy" },
-  etawah: { tempC: 29, condition: "rainy", rainChance: 70, summary: "Light showers" },
-  gorakhpur: { tempC: 30, condition: "cloudy", rainChance: 45, summary: "Humid and grey" },
 };
+
+for (const z of zoos) {
+  z.weather = weatherByZoo[z.id] ?? weatherByZoo["kanpur"]!;
+}
 
 for (const z of zoos) {
   z.weather = weatherByZoo[z.id] ?? weatherByZoo["lucknow"]!;
