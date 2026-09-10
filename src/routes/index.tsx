@@ -17,29 +17,21 @@ import { AppShell } from "@/components/zoo/AppShell";
 import { WeatherCard } from "@/components/zoo/WeatherCard";
 import { useZoo } from "@/lib/zoo-context";
 import { useAppPrefs } from "@/lib/app-context";
-import { cn } from "@/lib/utils";
-import { zoos, zooAnimals } from "@/data/zoo-data";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { zooAnimals } from "@/data/zoo-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Smart Zoo Navigator — Explore UP Zoos" },
+      { title: "Smart Zoo Navigator — Kanpur Zoological Park" },
       {
         name: "description",
         content:
-          "Maps, walking directions, animal guides and facilities for zoos across Uttar Pradesh.",
+          "Maps, walking directions, animal guides and facilities for Kanpur Zoological Park.",
       },
-      { property: "og:title", content: "Smart Zoo Navigator — Explore UP Zoos" },
+      { property: "og:title", content: "Smart Zoo Navigator — Kanpur Zoological Park" },
       {
         property: "og:description",
-        content: "Find animals, restrooms and food courts inside Uttar Pradesh zoos.",
+        content: "Find animals, restrooms and food courts inside Kanpur Zoological Park.",
       },
     ],
   }),
@@ -62,7 +54,7 @@ const moreLinks = [
 ] as const;
 
 function Index() {
-  const { zoo, zooId, setZooId } = useZoo();
+  const { zoo, zooId } = useZoo();
   const { t, lang } = useAppPrefs();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
@@ -79,7 +71,7 @@ function Index() {
         <div className="absolute inset-0 bg-gradient-to-t from-leaf-deep/95 via-leaf-deep/40 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-5">
         <p className="text-xs font-semibold tracking-[0.2em] text-sun uppercase">
-          Uttar Pradesh
+          Kanpur Zoological Park
           </p>
             <h1 className="mt-1 text-3xl font-semibold text-white">
               {t("page.home")}
@@ -94,21 +86,9 @@ function Index() {
         <WeatherCard />
 
         <div className="rounded-3xl border border-border bg-card p-4 shadow-card">
-          <label className="text-xs font-semibold text-muted-foreground uppercase">
-            {t("label.chooseZoo")}
-          </label>
-          <Select value={zooId} onValueChange={setZooId}>
-            <SelectTrigger className="mt-2 h-12 w-full rounded-2xl">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {zoos.map((z) => (
-                <SelectItem key={z.id} value={z.id}>
-                  {z.city} — {z.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <p className="text-xs font-semibold text-muted-foreground uppercase">
+            {zoo.name}
+          </p>
           <p className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
             <MapPin className="h-3.5 w-3.5 text-leaf" />
             {zoo.hours} · {count} species on display
@@ -160,28 +140,6 @@ function Index() {
                 </span>
                 <span className="truncate">{lang === "hi" ? labelHi : label}</span>
               </Link>
-            ))}
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-semibold">Popular zoos in Uttar Pradesh</h2>
-          <div className="-mx-4 mt-3 flex snap-x gap-3 overflow-x-auto px-4 pb-2 no-scrollbar">
-            {zoos.map((z) => (
-              <button
-                key={z.id}
-                onClick={() => setZooId(z.id)}
-                className="w-56 shrink-0 snap-start overflow-hidden rounded-3xl border border-border bg-card text-left shadow-card transition-transform active:scale-95"
-              >
-                <img src={z.image} alt={z.name} className="h-28 w-full object-cover" />
-                <div className="p-3">
-                  <p className="text-sm font-semibold">{z.city}</p>
-                  <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{z.blurb}</p>
-                  <p className="mt-2 text-[11px] font-medium text-leaf">
-                    {z.animalIds.length} species · {z.ticket}
-                  </p>
-                </div>
-              </button>
             ))}
           </div>
         </section>
