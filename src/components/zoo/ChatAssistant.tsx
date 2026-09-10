@@ -4,6 +4,7 @@ import { facilities, youAreHere, zooAnimals } from "@/data/zoo-data";
 import { useAppPrefs } from "@/lib/app-context";
 import { useZoo } from "@/lib/zoo-context";
 import { cn } from "@/lib/utils";
+import { DraggableFab } from "@/components/zoo/DraggableFab";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -91,14 +92,15 @@ export function ChatAssistant() {
 
   return (
     <>
-      <button
-        type="button"
+      <DraggableFab
         onClick={() => setOpen(true)}
-        aria-label={hi ? "ज़ू सहायक" : "Zoo assistant"}
-        className="fixed bottom-44 right-4 z-40 grid h-14 w-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-float transition-transform active:scale-90"
+        ariaLabel={hi ? "ज़ू सहायक" : "Zoo assistant"}
+        storageKey="fab-chat-pos"
+        defaultPositionClassName="bottom-44 right-4"
+        colorClassName="bg-primary text-primary-foreground"
       >
         <MessageCircle className="h-6 w-6" />
-      </button>
+      </DraggableFab>
 
       {open ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center">
