@@ -50,7 +50,7 @@ export function EmergencyButton() {
 
             <div className="mt-4 space-y-2">
               {emergencyContacts.map((c) => (
-                
+                <a
                   key={c.id}
                   href={`tel:${c.number.replace(/\s/g, "")}`}
                   className="flex items-center gap-3 rounded-2xl border border-destructive/30 bg-destructive/5 p-3"
