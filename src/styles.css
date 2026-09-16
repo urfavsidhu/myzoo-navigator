@@ -137,7 +137,7 @@
   --input: oklch(1 0 0 / 16%);
   --ring: oklch(0.68 0.12 150);
   --leaf: oklch(0.72 0.13 150);
-  --leaf-deep: oklch(0.22 0.04 152);
+  --leaf-deep: oklch(0.8 0.12 150);
   --sun: oklch(0.84 0.15 82);
   --clay: oklch(0.72 0.12 52);
   --bark: oklch(0.7 0.05 70);
@@ -183,6 +183,3 @@
     display: none;
   }
 }
-
-
-
