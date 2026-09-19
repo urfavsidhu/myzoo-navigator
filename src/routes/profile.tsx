@@ -25,16 +25,6 @@ export const Route = createFileRoute("/profile")({
 });
 
 const GENDERS = ["Male", "Female", "Other", "Prefer not to say"];
-const INTERESTS = [
-  "Big cats",
-  "Birds",
-  "Reptiles",
-  "Primates",
-  "Elephants",
-  "Photography",
-  "Conservation",
-  "Family trips",
-];
 const CATEGORIES = ["Wrong info", "Broken facility", "Inappropriate review", "Other"];
 
 type Report = {
@@ -132,7 +122,6 @@ function ProfileForm({
   const [fullName, setFullName] = useState(profile?.full_name ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
   const [gender, setGender] = useState(profile?.gender ?? "");
-  const [interests, setInterests] = useState<string[]>(profile?.interests ?? []);
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url ?? "");
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -142,7 +131,6 @@ function ProfileForm({
     setFullName(profile?.full_name ?? "");
     setBio(profile?.bio ?? "");
     setGender(profile?.gender ?? "");
-    setInterests(profile?.interests ?? []);
     setAvatarUrl(profile?.avatar_url ?? "");
   }, [profile]);
 
@@ -187,7 +175,6 @@ function ProfileForm({
         full_name: fullName.trim() || null,
         bio: bio.trim() || null,
         gender: gender || null,
-        interests,
         avatar_url: avatarUrl || null,
       });
     setBusy(false);
@@ -247,26 +234,6 @@ function ProfileForm({
             </option>
           ))}
         </select>
-        <div className="flex flex-wrap gap-2">
-          {INTERESTS.map((i) => {
-            const on = interests.includes(i);
-            return (
-              <button
-                key={i}
-                type="button"
-                onClick={() =>
-                  setInterests((prev) => (on ? prev.filter((p) => p !== i) : [...prev, i]))
-                }
-                className={cn(
-                  "rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
-                  on ? "border-leaf bg-leaf/15 text-leaf-deep" : "border-border text-muted-foreground",
-                )}
-              >
-                {i}
-              </button>
-            );
-          })}
-        </div>
         {status ? <p className="text-xs text-muted-foreground">{status}</p> : null}
         <button
           type="submit"
