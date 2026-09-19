@@ -1,11 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import type { Area } from "react-easy-crop";
 import { Camera, LogOut, Pencil, ShieldCheck, Ticket, Trash2 } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/zoo/AppShell";
+import { AvatarCropperModal } from "@/components/zoo/AvatarCropperModal";
 import { StarRating } from "@/components/zoo/StarRating";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { useReviews } from "@/lib/reviews-context";
+import { getCroppedImageBlob } from "@/lib/image-crop";
 import { getAnimal, getZoo } from "@/data/zoo-data";
 import { cn } from "@/lib/utils";
 
@@ -124,6 +127,7 @@ function ProfileForm({
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url ?? "");
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
 
   useEffect(() => {
     setFullName(profile?.full_name ?? "");
@@ -133,11 +137,14 @@ function ProfileForm({
     setAvatarUrl(profile?.avatar_url ?? "");
   }, [profile]);
 
-  const upload = async (file: File) => {
+  const upload = async (fileOrBlob: File | Blob) => {
     setBusy(true);
     setStatus(null);
-    const path = `${userId}/avatar-${Date.now()}`;
-    const { error } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+    const path = `${userId}/avatar-${Date.now()}.jpg`;
+    const { error } = await supabase.storage.from("avatars").upload(path, fileOrBlob, {
+      upsert: true,
+      contentType: "image/jpeg",
+    });
     if (error) {
       setStatus(error.message);
       setBusy(false);
@@ -146,6 +153,19 @@ function ProfileForm({
     const { data } = await supabase.storage.from("avatars").createSignedUrl(path, 60 * 60 * 24 * 365);
     setAvatarUrl(data?.signedUrl ?? "");
     setBusy(false);
+  };
+
+  const closeCropper = () => {
+    if (cropImageSrc) URL.revokeObjectURL(cropImageSrc);
+    setCropImageSrc(null);
+  };
+
+  const handleCropConfirm = async (areaPixels: Area) => {
+    if (!cropImageSrc) return;
+    setBusy(true);
+    const blob = await getCroppedImageBlob(cropImageSrc, areaPixels);
+    closeCropper();
+    await upload(blob);
   };
 
   const save = async (e: React.FormEvent) => {
@@ -167,83 +187,96 @@ function ProfileForm({
   };
 
   return (
-    <form onSubmit={save} className="space-y-3 rounded-3xl border border-border bg-card p-4 shadow-card">
-      <div className="flex items-center gap-3">
-        <div className="grid h-16 w-16 place-items-center overflow-hidden rounded-full bg-secondary">
-          {avatarUrl ? (
-            <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
-          ) : (
-            <Camera className="h-5 w-5 text-muted-foreground" />
-          )}
+    <>
+      <form onSubmit={save} className="space-y-3 rounded-3xl border border-border bg-card p-4 shadow-card">
+        <div className="flex items-center gap-3">
+          <div className="grid h-16 w-16 place-items-center overflow-hidden rounded-full bg-secondary">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
+            ) : (
+              <Camera className="h-5 w-5 text-muted-foreground" />
+            )}
+          </div>
+          <label className="cursor-pointer rounded-full border border-border px-3 py-2 text-xs font-semibold">
+            Change photo
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) setCropImageSrc(URL.createObjectURL(f));
+                // Reset so choosing the same file again still fires onChange.
+                e.target.value = "";
+              }}
+            />
+          </label>
         </div>
-        <label className="cursor-pointer rounded-full border border-border px-3 py-2 text-xs font-semibold">
-          Change photo
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) void upload(f);
-            }}
-          />
-        </label>
-      </div>
 
-      <input
-        value={fullName}
-        onChange={(e) => setFullName(e.target.value)}
-        placeholder="Full name"
-        className="w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none"
-      />
-      <textarea
-        value={bio}
-        onChange={(e) => setBio(e.target.value)}
-        placeholder="Short bio"
-        rows={3}
-        className="w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none"
-      />
-      <select
-        value={gender}
-        onChange={(e) => setGender(e.target.value)}
-        className="w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none"
-      >
-        <option value="">Gender…</option>
-        {GENDERS.map((g) => (
-          <option key={g} value={g}>
-            {g}
-          </option>
-        ))}
-      </select>
-      <div className="flex flex-wrap gap-2">
-        {INTERESTS.map((i) => {
-          const on = interests.includes(i);
-          return (
-            <button
-              key={i}
-              type="button"
-              onClick={() =>
-                setInterests((prev) => (on ? prev.filter((p) => p !== i) : [...prev, i]))
-              }
-              className={cn(
-                "rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
-                on ? "border-leaf bg-leaf/15 text-leaf-deep" : "border-border text-muted-foreground",
-              )}
-            >
-              {i}
-            </button>
-          );
-        })}
-      </div>
-      {status ? <p className="text-xs text-muted-foreground">{status}</p> : null}
-      <button
-        type="submit"
-        disabled={busy}
-        className="w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60"
-      >
-        Save profile
-      </button>
-    </form>
+        <input
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="Full name"
+          className="w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none"
+        />
+        <textarea
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+          placeholder="Short bio"
+          rows={3}
+          className="w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none"
+        />
+        <select
+          value={gender}
+          onChange={(e) => setGender(e.target.value)}
+          className="w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none"
+        >
+          <option value="">Gender…</option>
+          {GENDERS.map((g) => (
+            <option key={g} value={g}>
+              {g}
+            </option>
+          ))}
+        </select>
+        <div className="flex flex-wrap gap-2">
+          {INTERESTS.map((i) => {
+            const on = interests.includes(i);
+            return (
+              <button
+                key={i}
+                type="button"
+                onClick={() =>
+                  setInterests((prev) => (on ? prev.filter((p) => p !== i) : [...prev, i]))
+                }
+                className={cn(
+                  "rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
+                  on ? "border-leaf bg-leaf/15 text-leaf-deep" : "border-border text-muted-foreground",
+                )}
+              >
+                {i}
+              </button>
+            );
+          })}
+        </div>
+        {status ? <p className="text-xs text-muted-foreground">{status}</p> : null}
+        <button
+          type="submit"
+          disabled={busy}
+          className="w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+        >
+          Save profile
+        </button>
+      </form>
+
+      {cropImageSrc ? (
+        <AvatarCropperModal
+          imageSrc={cropImageSrc}
+          busy={busy}
+          onCancel={closeCropper}
+          onConfirm={(area) => void handleCropConfirm(area)}
+        />
+      ) : null}
+    </>
   );
 }
 
