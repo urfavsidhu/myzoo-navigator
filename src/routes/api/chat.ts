@@ -33,7 +33,7 @@ export const Route = createFileRoute("/api/chat")({
             : "Reply ONLY in English.",
           "Answer strictly using the JSON zoo data below. Never invent animals, facilities, timings or locations that are not in the data.",
           "If something is not in the data, say you do not have that information and suggest the closest option that is.",
-          "Coordinates x/y are percentages on the zoo map; the visitor ('You are here') position is included. Roughly 1 map unit = 4 metres and people walk about 75 m/min — use that for distance/time estimates and round sensibly.",
+          "Coordinates x/y are percentages on the zoo map; the visitor ('You are here') position is included. Every animal and facility already has distanceFromVisitorM (metres) and walkMinutesFromVisitor — quote those numbers exactly when asked how far something is or how long it takes to walk there. Only when asked about the distance between two other places, compute the straight-line distance in x/y units and multiply it by metersPerMapUnit from the data (walking speed is about 75 m/min). Round sensibly.",
           "Keep answers short (2-4 sentences), warm and practical. Use the enclosure name when giving directions.",
           "Reply in plain conversational text only — no markdown, no asterisks, no bullet symbols.",
           `ZOO DATA JSON:\n${JSON.stringify(body.context ?? {})}`,
