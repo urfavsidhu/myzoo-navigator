@@ -280,13 +280,19 @@ function ReviewsSection({ animalId }: { animalId: string }) {
   const [text, setText] = useState("");
   const [rating, setRating] = useState(5);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
     setBusy(true);
-    await addReview({ animalId, rating, text: text.trim() });
+    setError(null);
+    const result = await addReview({ animalId, rating, text: text.trim() });
     setBusy(false);
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
     setText("");
     setRating(5);
   };
@@ -330,6 +336,7 @@ function ReviewsSection({ animalId }: { animalId: string }) {
             placeholder={t("label.yourReview")}
             className="w-full rounded-full border border-border bg-background px-4 py-2.5 text-sm outline-none"
           />
+          {error ? <p className="text-xs text-destructive">{error}</p> : null}
           <button
             type="submit"
             disabled={busy}
