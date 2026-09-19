@@ -296,8 +296,8 @@ function MyReviews() {
                   <div className="flex gap-2">
                     <button
                       onClick={async () => {
-                        await updateReview(r.id, { rating, text });
-                        setEditId(null);
+                        const { error } = await updateReview(r.id, { rating, text });
+                        if (!error) setEditId(null);
                       }}
                       className="flex-1 rounded-full bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
                     >
