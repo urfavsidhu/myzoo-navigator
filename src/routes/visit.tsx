@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Clock, Info, Sparkles, Ticket as TicketIcon, Utensils } from "lucide-react";
+import { Clock, Info, Ticket as TicketIcon } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/zoo/AppShell";
 import { useZoo } from "@/lib/zoo-context";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
-import { feedingSchedule, weekDays, type Tickets } from "@/data/zoo-data";
+import { weekDays, type Tickets } from "@/data/zoo-data";
 import { cn } from "@/lib/utils";
 
 const TICKET_TYPES: Array<{ key: keyof Tickets; label: string }> = [
@@ -30,12 +30,12 @@ export const Route = createFileRoute("/visit")({
       {
         name: "description",
         content:
-          "Ticket prices, opening hours, closed days, feeding schedule and animal show timings for zoos in Uttar Pradesh.",
+          "Ticket prices, opening hours and closed days for zoos in Uttar Pradesh.",
       },
       { property: "og:title", content: "Tickets & Timings — Smart Zoo Navigator" },
       {
         property: "og:description",
-        content: "Plan your zoo visit with ticket prices, feeding times and show timings.",
+        content: "Plan your zoo visit with ticket prices and opening hours.",
       },
     ],
   }),
@@ -43,8 +43,7 @@ export const Route = createFileRoute("/visit")({
 });
 
 function VisitPage() {
-  const { zoo, zooId } = useZoo();
-  const feeds = feedingSchedule(zooId);
+  const { zoo } = useZoo();
   const closed = zoo.closedOn.replace(/s$/, "").slice(0, 3);
 
   const tickets = [
@@ -102,53 +101,6 @@ function VisitPage() {
                 </span>
               );
             })}
-          </div>
-        </section>
-
-        <section>
-          <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            <Utensils className="h-4 w-4 text-leaf" /> Feeding schedule
-          </h2>
-          <div className="mt-2 overflow-hidden rounded-3xl border border-border bg-card shadow-card">
-            {feeds.map((a, i) => (
-              <div
-                key={a.id}
-                className={cn(
-                  "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-3",
-                  i > 0 && "border-t border-border/70",
-                )}
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{a.name}</p>
-                  <p className="truncate text-[11px] text-muted-foreground">{a.enclosure}</p>
-                </div>
-                <span className="shrink-0 rounded-full bg-leaf/12 px-2.5 py-1 text-xs font-semibold text-leaf">
-                  {a.feedingTime}
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section>
-          <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            <Sparkles className="h-4 w-4 text-leaf" /> Animal show timings
-          </h2>
-          <div className="mt-2 space-y-2">
-            {zoo.shows.map((s) => (
-              <div
-                key={s.id}
-                className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-3xl border border-border bg-card p-4 shadow-card"
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold">{s.name}</p>
-                  <p className="truncate text-xs text-muted-foreground">{s.venue}</p>
-                </div>
-                <span className="shrink-0 rounded-full bg-sun/25 px-3 py-1 text-xs font-semibold text-clay">
-                  {s.time}
-                </span>
-              </div>
-            ))}
           </div>
         </section>
 
