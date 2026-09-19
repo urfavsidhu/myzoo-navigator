@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Bot, MessageCircle, Send, X } from "lucide-react";
-import { facilities, youAreHere, zooAnimals } from "@/data/zoo-data";
+import {
+  METERS_PER_MAP_UNIT,
+  distanceFrom,
+  facilities,
+  walkMinutes,
+  youAreHere,
+  zooAnimals,
+} from "@/data/zoo-data";
 import { useAppPrefs } from "@/lib/app-context";
 import { useZoo } from "@/lib/zoo-context";
 import { cn } from "@/lib/utils";
@@ -44,6 +51,7 @@ export function ChatAssistant() {
         shows: zoo.shows,
       },
       youAreHere,
+      metersPerMapUnit: METERS_PER_MAP_UNIT,
       animals: zooAnimals(zooId).map((a) => ({
         name: a.name,
         nameHi: a.nameHi,
@@ -54,6 +62,8 @@ export function ChatAssistant() {
         crowdLevel: a.crowdLevel,
         x: a.x,
         y: a.y,
+        distanceFromVisitorM: distanceFrom(youAreHere, a),
+        walkMinutesFromVisitor: walkMinutes(distanceFrom(youAreHere, a)),
       })),
       facilities: facilities.map((f) => ({
         name: f.name,
@@ -61,6 +71,8 @@ export function ChatAssistant() {
         description: f.description,
         x: f.x,
         y: f.y,
+        distanceFromVisitorM: distanceFrom(youAreHere, f),
+        walkMinutesFromVisitor: walkMinutes(distanceFrom(youAreHere, f)),
       })),
     };
 
