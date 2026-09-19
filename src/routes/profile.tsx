@@ -379,30 +379,33 @@ function MyTickets({ userId }: { userId: string }) {
             const status = ticketStatus(t.visit_date);
             const zooName = getZoo(t.zoo_id)?.name ?? t.zoo_id;
             return (
-              <li
-                key={t.id}
-                className={cn(
-                  "rounded-2xl bg-secondary/60 p-3",
-                  status.faded && "opacity-60",
-                )}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <p className="truncate text-sm font-semibold">{zooName}</p>
-                  <span
-                    className={cn(
-                      "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                      status.className,
-                    )}
-                  >
-                    {status.label}
-                  </span>
-                </div>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {t.visit_date} · {t.ticket_type} × {t.quantity} · ₹{t.total_price}
-                </p>
-                <p className="mt-1 font-mono text-[10px] text-muted-foreground">
-                  Ref: {t.reference_code}
-                </p>
+              <li key={t.id}>
+                <Link
+                  to="/tickets/$ticketId"
+                  params={{ ticketId: t.id }}
+                  className={cn(
+                    "block rounded-2xl bg-secondary/60 p-3 transition-colors active:bg-secondary",
+                    status.faded && "opacity-60",
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="truncate text-sm font-semibold">{zooName}</p>
+                    <span
+                      className={cn(
+                        "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                        status.className,
+                      )}
+                    >
+                      {status.label}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t.visit_date} · {t.ticket_type} × {t.quantity} · ₹{t.total_price}
+                  </p>
+                  <p className="mt-1 font-mono text-[10px] text-muted-foreground">
+                    Ref: {t.reference_code}
+                  </p>
+                </Link>
               </li>
             );
           })}
