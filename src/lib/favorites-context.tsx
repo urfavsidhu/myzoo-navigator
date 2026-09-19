@@ -28,10 +28,14 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       return;
     }
     void (async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("favorites")
         .select("animal_id")
         .eq("user_id", user.id);
+      if (error) {
+        console.error("Could not load favorites:", error.message);
+        return;
+      }
       setFavorites((data ?? []).map((row) => row.animal_id as string));
     })();
   }, [user]);
@@ -39,13 +43,26 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   const toggleFavorite = useCallback(
     (id: string) => {
       const wasFavorite = favorites.includes(id);
+      // Optimistic update so the heart responds instantly.
       setFavorites((prev) => (wasFavorite ? prev.filter((f) => f !== id) : [...prev, id]));
       if (!user) return;
+
       void (async () => {
-        if (wasFavorite) {
-          await supabase.from("favorites").delete().eq("user_id", user.id).eq("animal_id", id);
-        } else {
-          await supabase.from("favorites").insert({ user_id: user.id, animal_id: id });
+        const { error } = wasFavorite
+          ? await supabase.from("favorites").delete().eq("user_id", user.id).eq("animal_id", id)
+          : await supabase.from("favorites").insert({ user_id: user.id, animal_id: id });
+
+        // 23505 = already saved; that's the state we wanted anyway.
+        if (error && error.code !== "23505") {
+          console.error("Could not sync favorite:", error.message);
+          // Roll the heart back so the UI matches what is really saved.
+          setFavorites((prev) =>
+            wasFavorite
+              ? prev.includes(id)
+                ? prev
+                : [...prev, id]
+              : prev.filter((f) => f !== id),
+          );
         }
       })();
     },
