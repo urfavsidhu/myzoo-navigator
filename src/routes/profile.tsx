@@ -25,7 +25,6 @@ export const Route = createFileRoute("/profile")({
 });
 
 const GENDERS = ["Male", "Female", "Other", "Prefer not to say"];
-const INTERESTS = ["Big cats", "Birds", "Reptiles", "Photography", "Conservation"];
 const CATEGORIES = ["Wrong info", "Broken facility", "Inappropriate review", "Other"];
 
 type Report = {
