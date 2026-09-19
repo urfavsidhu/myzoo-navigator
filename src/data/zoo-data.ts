@@ -409,8 +409,16 @@ export const statusTone: Record<ConservationStatus, string> = {
   "Critically Endangered": "bg-destructive/15 text-destructive border-destructive/30",
 };
 
+/** Map scale: how many metres one map unit (1% of the map) represents. Used by the map, directions and the chatbot. */
+export const METERS_PER_MAP_UNIT = 6.4;
+/** Average walking speed in metres per minute. */
+export const WALK_METERS_PER_MIN = 75;
+
 const dist = (ax: number, ay: number, bx: number, by: number) =>
-  Math.round(Math.hypot(ax - bx, ay - by) * 6.4);
+  Math.round(Math.hypot(ax - bx, ay - by) * METERS_PER_MAP_UNIT);
+
+export const walkMinutes = (distance: number) =>
+  Math.max(1, Math.round(distance / WALK_METERS_PER_MIN));
 
 export const distanceFrom = (
   from: { x: number; y: number },
@@ -437,7 +445,7 @@ export const buildDirections = (
   to: { x: number; y: number; name: string },
 ): Directions => {
   const distance = distanceFrom(youAreHere, to);
-  const minutes = Math.max(1, Math.round(distance / 75));
+  const minutes = walkMinutes(distance);
   const first = Math.max(20, Math.round(distance * 0.55 * 0.1) * 10);
   const second = Math.max(20, distance - first);
   const turn = to.x < youAreHere.x ? "Turn Left" : "Turn Right";
